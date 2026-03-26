@@ -6,7 +6,7 @@
 
 ## What These Examples Are
 
-Each worked example traces a real-world problem type through the complete 5WW framework — all four layers, all eight mathematical foundations. They are not summaries. They are full investigations, run from the surface event to verified resolution, with annotations showing which math is operating at each step.
+Each worked example traces a real-world problem type through the complete HTSA framework — all four layers, all eight mathematical foundations. They are not summaries. They are full investigations, run from the surface event to verified resolution, with annotations showing which math is operating at each step.
 
 Use them to:
 

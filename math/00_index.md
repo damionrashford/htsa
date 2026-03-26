@@ -2,7 +2,7 @@
 
 > SOMETHING HAPPENED → TO SOMEONE → SOMEWHERE → AT SOME POINT → FOR SOME REASON
 
-The 5Ws + 5 Whys framework is not just a thinking tool.
+**How to Solve Anything (HTSA)** is not just a thinking tool.
 It is an **applied graph traversal algorithm for causal inference** — with probability weighting, entropy reduction, and Bayesian evidence updating at every node.
 
 The math is always running underneath. These documents make it visible.

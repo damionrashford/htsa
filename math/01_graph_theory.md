@@ -12,7 +12,7 @@ Graph theory is the mathematical study of **nodes** (points) and **edges** (conn
 
 ## How It Applies Here
 
-Every investigation you run using the 5Ws + 5 Whys framework **is a directed acyclic graph (DAG)**.
+Every investigation you run using **How to Solve Anything (HTSA)** is a directed acyclic graph (DAG).
 
 | Framework Element | Graph Term | Definition |
 |---|---|---|

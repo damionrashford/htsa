@@ -1,4 +1,4 @@
-# 5WW — Investigation Framework
+# How to Solve Anything (HTSA)
 
 > SOMETHING HAPPENED → TO SOMEONE → SOMEWHERE → AT SOME POINT → FOR SOME REASON
 

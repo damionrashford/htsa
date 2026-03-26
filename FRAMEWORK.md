@@ -1,6 +1,6 @@
 # SOMETHING HAPPENED → TO SOMEONE → SOMEWHERE → AT SOME POINT → FOR SOME REASON
 
-> A universal investigation framework combining the 5 Ws and 5 Whys.
+> How to Solve Anything (HTSA) — A universal investigation framework combining the 5 Ws and 5 Whys.
 > Applicable to any problem, in any discipline, at any scale.
 
 ---
