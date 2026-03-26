@@ -5,9 +5,9 @@
 **How to Solve Anything (HTSA)** — A universal investigation framework combining the 5 Ws and 5 Whys.
 Applicable to any problem, in any discipline, at any scale.
 
-![How to Solve Anything — Framework Diagram](diagram.svg)
+![How to Solve Anything — Framework Diagram](assets/diagram.svg)
 
-![HTSA — The Algorithm](algorithm.svg)
+![HTSA — The Algorithm](assets/algorithm.svg)
 
 ---
 
@@ -93,6 +93,7 @@ The framework is an applied graph traversal algorithm for causal inference — w
 
 - **[FRAMEWORK.md](FRAMEWORK.md)** — The complete framework with templates
 - **[math/00_index.md](math/00_index.md)** — How the math connects
+- **[DIAGRAMS.md](DIAGRAMS.md)** — Framework diagram + algorithm flowchart
 
 ---
 
