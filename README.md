@@ -119,4 +119,28 @@ Why (surface)
 
 ---
 
+<h3 align="center">⚙️ Engine</h3>
+
+<p align="center">The framework is also available as a <strong>Python library</strong> that codifies the algorithm.<br>The engine provides structure and math — you provide judgment.</p>
+
+```bash
+cd engine && pip install -e .
+```
+
+```python
+from htsa_engine import Investigation, Evidence, EvidenceTier, EvidenceDirection, DepthCriteria
+
+inv = Investigation(title="API 500 errors", pruning_threshold=0.05)
+inv.set_situation(who_affected="Users", what="500 errors", when_during="2:47 AM", where="EU-west", why_surface="Load spike")
+inv.complete_situation()
+origin = inv.start_causal_chain("Server errors under load")
+branch = inv.add_hypothesis(origin, "Memory leak", probability=0.6)
+# ... add evidence, mark root cause, resolve, verify
+inv.save("investigation.json")
+```
+
+<p align="center"><strong><a href="engine/README.md">Full engine documentation →</a></strong></p>
+
+---
+
 <p align="center"><a href="LICENSE"><em>MIT Licensed</em></a> · <a href="CONTRIBUTING.md"><em>Contributions welcome</em></a></p>

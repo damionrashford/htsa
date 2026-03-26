@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "htsa-engine"
+version = "0.1.0"
+description = "How to Solve Anything — investigation engine with Bayesian tracking, search strategies, and bias detection"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["htsa_engine*"]
