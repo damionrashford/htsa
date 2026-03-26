@@ -5,10 +5,6 @@
 **How to Solve Anything (HTSA)** — A universal investigation framework combining the 5 Ws and 5 Whys.
 Applicable to any problem, in any discipline, at any scale.
 
-![How to Solve Anything — Framework Diagram](assets/diagram.svg)
-
-![HTSA — The Algorithm](assets/algorithm.svg)
-
 ---
 
 ## The Core Insight
