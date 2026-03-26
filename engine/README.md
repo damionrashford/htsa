@@ -4,31 +4,37 @@ The [How to Solve Anything](../FRAMEWORK.md) framework, codified as a Python lib
 
 ## What this is
 
-A graph-based investigation engine that implements the HTSA algorithm from [proofs/02_algorithm.md](../proofs/02_algorithm.md). It provides the **deterministic layer** — the math, constraints, and structure — while leaving the **judgment layer** (the actual Why answers, evidence interpretation, depth criteria evaluation) to a human or LLM interface.
+A graph-based investigation engine that implements the HTSA algorithm from [proofs/02_algorithm.md](../proofs/02_algorithm.md). Two layers work together:
+
+- **Deterministic layer** (the engine) — graph structure, Bayesian math, entropy tracking, pruning, bias detection, constraint enforcement.
+- **Judgment layer** (you or an LLM) — generating hypotheses, interpreting evidence, evaluating depth criteria, proposing resolutions.
+
+The engine enforces the rules. You (or the LLM) make the calls.
 
 ## Architecture
 
 ```
-Investigation (orchestrator)
-├── core/                    Foundational types
-│   ├── enums.py             NodeStatus, EvidenceTier, EvidenceDirection, etc.
-│   ├── models.py            Evidence, Node, DepthCriteria, Resolution, SituationMap
-│   └── graph.py             DAG with typed nodes and edges
-├── analysis/                Computational engines
-│   ├── probability.py       Bayesian updating, entropy, pruning
-│   ├── search.py            Best-First / DFS / BFS
-│   ├── evidence.py          Tier classification, temporal firewall
-│   ├── bias.py              7 cognitive hazard detectors
-│   └── loops.py             Feedback loop detection and break points
-├── resolution/              Layers 3 & 4
-│   ├── engine.py            Fix/mitigate/accept with counterfactual test
-│   └── verification.py      Verification windows and learning loop
-├── serialization.py         JSON round-trip (to_dict / from_dict)
-└── export.py                Markdown rendering matching FRAMEWORK.md templates
+htsa_engine/
+├── core/                       Foundational types
+│   ├── enums.py                NodeStatus, EvidenceTier, EvidenceDirection, etc.
+│   ├── models.py               Evidence, Node, DepthCriteria, Resolution, SituationMap
+│   └── graph.py                DAG with typed nodes and edges
+├── analysis/                   Computational engines
+│   ├── probability.py          Bayesian updating, entropy, pruning
+│   ├── search.py               Best-First / DFS / BFS
+│   ├── evidence.py             Tier classification, temporal firewall
+│   ├── bias.py                 7 cognitive hazard detectors
+│   └── loops.py                Feedback loop detection and break points
+├── resolution/                 Layers 3 & 4
+│   ├── engine.py               Fix/mitigate/accept with counterfactual test
+│   └── verification.py         Verification windows and learning loop
 ├── llm/                        LLM integration (any provider)
 │   ├── client.py               Provider-agnostic chat completions client
 │   ├── prompts.py              System prompt + judgment prompt templates
 │   └── advisor.py              LLMAdvisor — fills judgment slots via LLM
+├── investigation.py            Orchestrator tying all modules together
+├── serialization.py            JSON round-trip (to_dict / from_dict)
+└── export.py                   Markdown rendering matching FRAMEWORK.md templates
 ```
 
 ## Install
@@ -38,7 +44,29 @@ cd engine
 pip install -e .
 ```
 
-## Quick start
+## Quick start — with an LLM (easiest)
+
+Point the advisor at any OpenAI-compatible endpoint. One call runs the full 4-layer investigation.
+
+```python
+from htsa_engine.llm import LLMAdvisor
+
+# Pick any provider (see "Supported providers" below)
+advisor = LLMAdvisor("https://api.openai.com/v1", api_key="sk-...", model="gpt-4o")
+
+# One call — all 4 layers
+inv = advisor.run("API returning 500 errors since 2:47 AM, EU region only")
+
+print(f"Root causes: {[n.statement for n in inv.root_causes]}")
+print(f"Entropy: {inv.entropy:.3f}")
+
+inv.save("investigation.json")
+inv.save_markdown("investigation.md")
+```
+
+## Quick start — manual (full control)
+
+Drive every decision yourself. The engine handles the math.
 
 ```python
 from htsa_engine import (
@@ -133,32 +161,11 @@ loaded = Investigation.load("investigation.json")
 inv.save_markdown("investigation.md")
 ```
 
-## Package structure
-
-| Subpackage | Module | What it does |
-|---|---|---|
-| `core/` | `enums.py` | All enumerations (zero dependencies) |
-| `core/` | `models.py` | Evidence, Node, DepthCriteria, Resolution, SituationMap |
-| `core/` | `graph.py` | DAG structure, convergence detection |
-| `analysis/` | `probability.py` | Bayesian updates, entropy tracking, pruning with recovery |
-| `analysis/` | `search.py` | Best-First (live priority), DFS (stack), BFS (queue) |
-| `analysis/` | `bias.py` | 7 cognitive hazard detectors (warning + blocking alerts) |
-| `analysis/` | `evidence.py` | Tier classification, temporal firewall, conflict detection |
-| `analysis/` | `loops.py` | Feedback loop registration and break point analysis |
-| `resolution/` | `engine.py` | Fix/mitigate/accept, counterfactual test, priority scoring |
-| `resolution/` | `verification.py` | Verification windows, learning loop |
-| — | `investigation.py` | Orchestrator tying all modules together |
-| — | `serialization.py` | JSON round-trip for full investigation state |
-| — | `export.py` | Markdown rendering matching FRAMEWORK.md templates |
-| `llm/` | `client.py` | Provider-agnostic chat completions HTTP client (stdlib only) |
-| `llm/` | `prompts.py` | System prompt + prompt builders for each judgment type |
-| `llm/` | `advisor.py` | LLMAdvisor — fills judgment slots, drives auto-investigation |
-
 ## LLM integration
 
 The `llm/` subpackage connects **any LLM** to the engine through the OpenAI chat completions standard. Zero external dependencies — uses `urllib` from the standard library.
 
-### Any provider, one interface
+### Supported providers
 
 ```python
 from htsa_engine.llm import LLMAdvisor
@@ -188,29 +195,20 @@ advisor = LLMAdvisor(
 )
 ```
 
-### Full auto-investigation
-
-One call. All 4 layers. The LLM fills every judgment slot, the engine enforces all constraints.
-
-```python
-inv = advisor.run("API returning 500 errors since 2:47 AM, EU region only")
-
-print(f"Root causes: {[n.statement for n in inv.root_causes]}")
-print(f"Entropy: {inv.entropy:.3f}")
-inv.save("investigation.json")
-inv.save_markdown("investigation.md")
-```
+Any endpoint that implements `/v1/chat/completions` works. This covers every major provider.
 
 ### Step-by-step (human drives, LLM advises)
 
+Use individual advisor methods when you want control over each step and are providing real evidence.
+
 ```python
-from htsa_engine import Investigation
+from htsa_engine import Investigation, Evidence, EvidenceTier, EvidenceDirection, ResolutionType
 from htsa_engine.llm import LLMAdvisor
 
 advisor = LLMAdvisor("https://api.openai.com/v1", api_key="sk-...", model="gpt-4o")
 inv = Investigation(title="API 500 errors", pruning_threshold=0.05)
 
-# LLM extracts the 5 Ws
+# LLM extracts the 5 Ws from your problem description
 situation = advisor.analyze_situation("API returning 500 errors since 2:47 AM, EU-west only")
 inv.set_situation(**situation)
 inv.complete_situation()
@@ -221,28 +219,44 @@ hypotheses = advisor.generate_hypotheses(inv, origin, count=3)
 for h in hypotheses:
     inv.add_hypothesis(origin, h["statement"], h["probability"])
 
-# LLM classifies real evidence you provide
+# You provide real evidence — LLM classifies tier and direction
 classification = advisor.classify_evidence(
     node_statement="Memory leak in request handler",
     description="Heap dump shows 2.1GB cached, limit is 512MB",
     source="Heap dump analysis",
 )
-# classification = {"tier": 1, "direction": "supports", "reasoning": "..."}
+# Returns: {"tier": 1, "direction": "supports", "reasoning": "..."}
+
+# LLM suggests what evidence to look for
+suggestions = advisor.suggest_evidence(inv, node_id)
+# Returns: [{"what_to_check": "...", "source": "...", "if_found": "...", ...}]
 
 # LLM evaluates depth criteria
-criteria = advisor.evaluate_depth_criteria(inv, some_node_id)
-inv.mark_root_cause(some_node_id, criteria)
+criteria = advisor.evaluate_depth_criteria(inv, node_id)
+inv.mark_root_cause(node_id, criteria)
 
 # LLM proposes resolution
-resolution = advisor.propose_resolution(inv, some_node_id)
-inv.resolve(some_node_id, ResolutionType(resolution["type"]), change=resolution["change"], ...)
+resolution = advisor.propose_resolution(inv, node_id)
+inv.resolve(
+    node_id,
+    ResolutionType(resolution["type"]),
+    change=resolution["change"],
+    owner=resolution.get("owner", ""),
+    impact=resolution["impact"],
+    recurrence=resolution["recurrence"],
+    actionability=resolution["actionability"],
+)
+
+# LLM evaluates counterfactual
+passes = advisor.evaluate_counterfactual(inv, node_id)
+inv.test_fix_counterfactual(node_id, passes)
 ```
 
 ### How LLMs connect to the engine
 
-The engine has a clear boundary: **structure vs. judgment**. Every engine method that needs judgment is a slot the LLM fills:
+The engine has a clear boundary: **structure vs. judgment**. Every engine method that needs a judgment call maps to an advisor method:
 
-| Engine Method | Judgment Slot | LLM Advisor Method |
+| Engine Method | Judgment Needed | LLM Advisor Method |
 |---|---|---|
 | `set_situation()` | Decompose problem into 5 Ws | `analyze_situation()` |
 | `add_hypothesis()` | Generate Why + assign prior | `generate_hypotheses()` |
@@ -253,6 +267,27 @@ The engine has a clear boundary: **structure vs. judgment**. Every engine method
 | `add_verification()` | Define verification window | `propose_verification()` |
 
 The engine handles all the math (Bayesian updates, entropy, normalization, pruning). The LLM handles all the reasoning (what caused what, what evidence means, what to fix). Neither can do the other's job.
+
+## Package structure
+
+| Subpackage | Module | What it does |
+|---|---|---|
+| `core/` | `enums.py` | All enumerations (zero dependencies) |
+| `core/` | `models.py` | Evidence, Node, DepthCriteria, Resolution, SituationMap |
+| `core/` | `graph.py` | DAG structure, convergence detection |
+| `analysis/` | `probability.py` | Bayesian updates, entropy tracking, pruning with recovery |
+| `analysis/` | `search.py` | Best-First (live priority), DFS (stack), BFS (queue) |
+| `analysis/` | `bias.py` | 7 cognitive hazard detectors (warning + blocking alerts) |
+| `analysis/` | `evidence.py` | Tier classification, temporal firewall, conflict detection |
+| `analysis/` | `loops.py` | Feedback loop registration and break point analysis |
+| `resolution/` | `engine.py` | Fix/mitigate/accept, counterfactual test, priority scoring |
+| `resolution/` | `verification.py` | Verification windows, learning loop |
+| `llm/` | `client.py` | Provider-agnostic chat completions client (stdlib only) |
+| `llm/` | `prompts.py` | System prompt + prompt builders for each judgment type |
+| `llm/` | `advisor.py` | LLMAdvisor — fills judgment slots, drives auto-investigation |
+| — | `investigation.py` | Orchestrator tying all modules together |
+| — | `serialization.py` | JSON round-trip for full investigation state |
+| — | `export.py` | Markdown rendering matching FRAMEWORK.md templates |
 
 ## What the engine enforces
 
@@ -267,8 +302,8 @@ The engine handles all the math (Bayesian updates, entropy, normalization, pruni
 
 ## What the engine does NOT do
 
-- **Generate Why answers.** The engine structures and constrains — a human or LLM provides the content.
+- **Generate Why answers.** The engine structures and constrains — you or the LLM provide the content.
 - **Interpret evidence.** You classify tier and direction; the engine calculates the math.
 - **Evaluate depth criteria.** You answer the four questions; the engine enforces that you answered them.
 
-That boundary — engine provides structure, human/LLM provides judgment — is the core design decision. The `llm/` subpackage bridges that boundary for any provider that speaks the chat completions protocol.
+That boundary — engine provides structure, you provide judgment — is the core design decision. The `llm/` subpackage automates the judgment side for any provider that speaks the chat completions protocol.

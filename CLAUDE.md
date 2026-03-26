@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-HTSA (How to Solve Anything) formalizes a universal investigation framework combining the 5 Ws and 5 Whys, backed by eight mathematical foundations and seven formal proofs. The repository contains both the framework documentation (Markdown) and a Python engine that codifies the algorithm.
+HTSA (How to Solve Anything) formalizes a universal investigation framework combining the 5 Ws and 5 Whys, backed by eight mathematical foundations and seven formal proofs. The repository contains framework documentation (Markdown) and a Python engine that codifies the algorithm with provider-agnostic LLM integration.
 
 ## Repository Structure
 
@@ -31,8 +31,12 @@ engine/                ← Python implementation of the HTSA algorithm
     core/              ← Foundational types (enums, models, graph DAG)
     analysis/          ← Computational engines (probability, search, bias, evidence, loops)
     resolution/        ← Layers 3 & 4 (resolution engine, verification tracker)
+    llm/               ← LLM integration (any OpenAI-compatible provider, stdlib only)
+      client.py        ← Provider-agnostic /v1/chat/completions HTTP client
+      prompts.py       ← System prompt + judgment prompt templates
+      advisor.py       ← LLMAdvisor — fills judgment slots, auto-investigation via run()
   pyproject.toml       ← Package config, Python 3.11+, zero dependencies
-  README.md            ← Engine architecture and quick start
+  README.md            ← Engine docs, LLM integration guide, quick start
 assets/                ← SVG diagrams referenced by DIAGRAMS.md
 DIAGRAMS.md            ← Visual references for the framework and algorithm
 ```

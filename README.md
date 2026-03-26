@@ -121,14 +121,28 @@ Why (surface)
 
 <h3 align="center">⚙️ Engine</h3>
 
-<p align="center">The framework is also available as a <strong>Python library</strong> that codifies the algorithm.<br>The engine provides structure and math — you provide judgment.</p>
+<p align="center">The framework is also available as a <strong>Python library</strong> with built-in LLM integration.<br>Works with any provider — OpenAI, Anthropic, Groq, Mistral, Ollama, or any OpenAI-compatible endpoint.</p>
 
 ```bash
 cd engine && pip install -e .
 ```
 
+**Auto-investigate with any LLM** — one call, all 4 layers:
+
 ```python
-from htsa_engine import Investigation, Evidence, EvidenceTier, EvidenceDirection, DepthCriteria
+from htsa_engine.llm import LLMAdvisor
+
+advisor = LLMAdvisor("https://api.openai.com/v1", api_key="sk-...", model="gpt-4o")
+inv = advisor.run("API returning 500 errors since 2:47 AM, EU region only")
+
+print(inv.root_causes)
+inv.save("investigation.json")
+```
+
+**Or drive it manually** — full control over every decision:
+
+```python
+from htsa_engine import Investigation, Evidence, EvidenceTier, EvidenceDirection
 
 inv = Investigation(title="API 500 errors", pruning_threshold=0.05)
 inv.set_situation(who_affected="Users", what="500 errors", when_during="2:47 AM", where="EU-west", why_surface="Load spike")
