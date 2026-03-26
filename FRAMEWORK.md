@@ -7,7 +7,9 @@
 
 ## The Core Insight
 
-Every problem in every field has the same anatomy. The vocabulary changes. The structure never does.
+Most problems, across most fields, share a common anatomy. The vocabulary changes. The structure rarely does.
+
+**Scope:** The framework applies best to problems with decomposable causal structure. Some problem classes resist this model — notably wicked problems (where the problem definition is contested), emergent phenomena (where the whole is not reducible to parts), and feedback loops (where causes are circular). For these, the framework can still structure initial investigation, but its DAG model is an approximation, not an exact fit. See **[math/01_graph_theory.md](math/01_graph_theory.md)** for the feedback loop protocol.
 
 The **5 Ws** tell you *what happened*.
 The **5 Whys** tell you *why it happened*.
@@ -15,7 +17,7 @@ Together they tell you *what to do about it*.
 
 ---
 
-## The Two Layers
+## The Four Layers
 
 ### Layer 1 — Situation Map (5 Ws)
 
@@ -88,6 +90,11 @@ When the Why tree produces several root causes, prioritize by:
 
 ```
 Priority = Impact × Likelihood of recurrence × Actionability
+
+Rate each factor on a consistent scale (e.g., 1–5) before multiplying.
+Note: these factors are correlated, not independent — high-impact problems
+tend to receive more attention, making them more actionable. Use the formula
+as a ranking heuristic, not a precise score.
 
 High impact + high recurrence + easy to change  →  Act first
 High impact + low recurrence + hard to change   →  Plan and schedule
@@ -224,14 +231,14 @@ Apply all four tests before closing the Why chain:
 - If no: go deeper. You have reached a description, not a cause.
 
 **2. The Counterfactual Clarity Test**
-> "Is the causal mechanism clear enough to state precisely? Do you know *how* this cause produced the effect?"
+> "Is the causal relationship clear enough to state precisely? Can you explain *how* this cause produced the effect?"
 - If yes: proceed.
-- If no: the cause is still too vague. A mechanism you cannot state is a cause you have not understood.
+- If no: the cause is still too vague. (Note: a fully detailed mechanism strengthens the claim, but overwhelming statistical evidence — Tier 1 — can compensate for an incomplete mechanism. See **[math/03_causal_inference.md](math/03_causal_inference.md)**.)
 
 **3. The System Boundary Test**
 > "Is this cause inside or outside the system's control?"
 - If inside: it is a root cause. Fix or mitigate.
-- If outside: it is a constraint. Accept and document it. Design around it.
+- If outside: it is a constraint. Accept and document it. You may still design around it — but "design around it" is a mitigation of the constraint's impact, not a fix of the root cause. If you can design around it, the *lack of that design* is inside your boundary and may be the real root cause.
 
 **4. The Diminishing Returns Test**
 > "If we went one Why deeper, would it change what action we take?"
@@ -251,12 +258,83 @@ Seven biases reliably derail investigations. Know them before you start.
 | **Confirmation bias** | Only evidence that supports the leading hypothesis is registered | Actively seek evidence that would disprove each Why answer |
 | **Availability bias** | Priors reflect recent memory, not actual base rates | Set priors from data before beginning |
 | **Attribution bias** | Why chain stops at a person instead of the system behind them | Any answer that names a person — ask Why once more |
-| **Sunk cost** | Continues down a failed branch because time was already spent | Set a pruning threshold (default: 5%) before starting; follow it regardless |
+| **Sunk cost** | Continues down a failed branch because time was already spent | Set a domain-appropriate pruning threshold before starting; follow it regardless |
 | **Groupthink** | Surprising evidence is suppressed; entropy never drops to minimum | Assign an adversarial investigator role explicitly |
 | **Anchoring** | First hypothesis raised dominates despite evidence | Do not name a leading hypothesis before the 5 Ws are complete |
 | **Premature closure** | Investigation stops at a symptom that feels like a cause | Apply all four Depth Criteria tests before closing the Why chain |
 
 Full treatment: **[math/07_cognitive_biases.md](math/07_cognitive_biases.md)**
+
+---
+
+## Time-Pressure Mode
+
+Not every investigation has unlimited time. When operating under pressure (active outage, security breach, patient in crisis), adapt the framework:
+
+```
+FULL MODE (hours to days):
+  All four layers, all depth criteria, all evidence tiers.
+
+RAPID MODE (minutes to hours):
+  Layer 1: 5 Ws in one sentence each — do not skip.
+  Layer 2: DFS only — follow the single most likely branch.
+           Prune aggressively (raise θ to 0.20).
+           Accept Tier 2-3 evidence temporarily.
+  Layer 3: Implement the first actionable fix.
+           Label it as "rapid fix — verify later."
+  Layer 4: Schedule full verification for after the crisis.
+```
+
+**Non-negotiable even under time pressure:**
+1. Complete the 5 Ws (even in shorthand). Skipping the situation map is the #1 cause of fixing the wrong thing under pressure.
+2. Run the counterfactual test on the proposed fix. One question: "If this fix had existed, would the problem still have happened?" takes 30 seconds and prevents wasted effort.
+3. Document what you skipped. A rapid investigation should feed into a full investigation later.
+
+---
+
+## Root Cause Interaction
+
+The framework treats root causes as independent items. In reality, root causes can interact:
+
+| Interaction Type | Description | Example |
+|---|---|---|
+| **AND-causation** | The problem only occurs when both causes are present | Bad config AND missing validation — either alone wouldn't cause the outage |
+| **Amplification** | One root cause makes another worse | Technical debt amplifies the impact of a bad deploy |
+| **Conflict** | Fixing one root cause worsens another | Fixing speed may worsen reliability |
+
+When multiple root causes are found, ask:
+1. "Would fixing only Root Cause A prevent the problem, even if B remains?" If no → AND-causation.
+2. "Does fixing Root Cause A change the priority of Root Cause B?" If yes → interaction.
+3. "Could fixing Root Cause A make Root Cause B worse?" If yes → conflict.
+
+Document interactions in the resolution layer. AND-causes must be fixed together. Conflicts require sequencing or trade-off decisions.
+
+---
+
+## Verification Windows
+
+Layer 4 asks "Has the problem recurred?" but does not specify how long to wait. Set a verification window based on the problem's natural cycle:
+
+```
+Event-driven problems (outages, bugs):
+  → Wait for the next occurrence of the triggering condition
+  → If the trigger has occurred and the problem did not recur → verified
+
+Time-driven problems (quarterly bottlenecks, seasonal patterns):
+  → Wait for one full cycle of the pattern
+  → If the cycle passed without recurrence → verified
+
+Continuous problems (performance degradation, culture issues):
+  → Set a measurement interval (e.g., 30 days)
+  → Compare metrics before and after the fix → verified if improved
+
+If no natural trigger exists:
+  → Minimum 2 weeks for technical fixes
+  → Minimum 1 quarter for process/organizational fixes
+  → Document the expected verification date when closing the investigation
+```
+
+An investigation without a defined verification window is not closed — it is abandoned.
 
 ---
 
@@ -292,6 +370,8 @@ Two versions. Use the Linear Template for simple, single-cause problems. Use the
 INVESTIGATION: [Title]
 DATE: [Date]
 INVESTIGATOR: [Name]
+MODE: [ ] Full  [ ] Rapid (time-constrained — schedule full review later)
+PRUNING THRESHOLD (θ): [e.g., 5% general, 1% safety-critical, 10% exploratory]
 
 --- SITUATION (5 Ws) ---
 
@@ -303,20 +383,25 @@ Why (surface):
 
 --- CAUSATION (5 Whys) ---
 
-Why 1:   [answer]
+Why 1:   [answer]                                      P = [probability]
   Evidence:  [source, tier, timestamp]
+  Status: [ ] Finding (Tier 1/2 evidence)  [ ] Hypothesis (Tier 3/4 only)
 
-Why 2:   [answer]
+Why 2:   [answer]                                      P = [probability]
   Evidence:  [source, tier, timestamp]
+  Status: [ ] Finding  [ ] Hypothesis
 
-Why 3:   [answer]
+Why 3:   [answer]                                      P = [probability]
   Evidence:  [source, tier, timestamp]
+  Status: [ ] Finding  [ ] Hypothesis
 
-Why 4:   [answer]
+Why 4:   [answer]                                      P = [probability]
   Evidence:  [source, tier, timestamp]
+  Status: [ ] Finding  [ ] Hypothesis
 
-Why 5:   [answer]  ← ROOT CAUSE
+Why 5:   [answer]  ← ROOT CAUSE                        P = [probability]
   Evidence:  [source, tier, timestamp]
+  Status: [ ] Finding  [ ] Hypothesis
   Depth criteria passed:  [ ] Actionability  [ ] Counterfactual Clarity  [ ] System Boundary  [ ] Diminishing Returns
 
 --- RESOLUTION ---
@@ -330,6 +415,7 @@ By When:
 
 --- VERIFICATION ---
 
+Verification window: [how long / what trigger to wait for]
 Problem recurred after fix? [ ] Yes → return to Layer 2   [ ] No → proceed
 Monitoring confirms fix? [ ] Yes   [ ] No
 Priors updated for next investigation? [ ] Yes
@@ -346,6 +432,8 @@ Use this when any Why produces more than one answer. Each branch is tracked sepa
 INVESTIGATION: [Title]
 DATE: [Date]
 INVESTIGATOR: [Name]
+MODE: [ ] Full  [ ] Rapid (time-constrained — schedule full review later)
+PRUNING THRESHOLD (θ): [e.g., 5% general, 1% safety-critical, 10% exploratory]
 
 --- SITUATION (5 Ws) ---
 
@@ -359,29 +447,36 @@ Why (surface):
 
 Why (surface): [answer]
   │
-  ├──► Branch A: [first cause]
-  │      Evidence: [source, tier]
+  ├──► Branch A: [first cause]                         P = [probability]
+  │      Evidence: [source, tier, timestamp]
+  │      Status: [ ] Finding  [ ] Hypothesis
   │      │
-  │      └──► Why A2: [answer]
-  │             Evidence: [source, tier]
+  │      └──► Why A2: [answer]                         P = [probability]
+  │             Evidence: [source, tier, timestamp]
+  │             Status: [ ] Finding  [ ] Hypothesis
   │             │
-  │             └──► ROOT CAUSE A: [state it]
+  │             └──► ROOT CAUSE A: [state it]          P = [probability]
   │                    Depth criteria: [ ] Actionability [ ] Counterfactual [ ] Boundary [ ] Returns
   │
-  └──► Branch B: [second cause]
-         Evidence: [source, tier]
+  └──► Branch B: [second cause]                        P = [probability]
+         Evidence: [source, tier, timestamp]
+         Status: [ ] Finding  [ ] Hypothesis
          │
-         ├──► Why B2a: [answer]
-         │      Evidence: [source, tier]
-         │      └──► ROOT CAUSE B: [state it]
+         ├──► Why B2a: [answer]                        P = [probability]
+         │      Evidence: [source, tier, timestamp]
+         │      Status: [ ] Finding  [ ] Hypothesis
+         │      └──► ROOT CAUSE B: [state it]          P = [probability]
          │             Depth criteria: [ ] Actionability [ ] Counterfactual [ ] Boundary [ ] Returns
          │
-         └──► Why B2b: [answer]
-                Evidence: [source, tier]
-                └──► ROOT CAUSE C: [state it]
+         └──► Why B2b: [answer]                        P = [probability]
+                Evidence: [source, tier, timestamp]
+                Status: [ ] Finding  [ ] Hypothesis
+                └──► ROOT CAUSE C: [state it]          P = [probability]
                        Depth criteria: [ ] Actionability [ ] Counterfactual [ ] Boundary [ ] Returns
 
 Convergent nodes (root causes reached by multiple branches):
+Pruned branches (kept for recovery): [branch, reason pruned, P at time of pruning]
+Feedback loops detected: [ ] None  [ ] Yes — documented below:
 
 --- RESOLUTION ---
 
@@ -403,10 +498,14 @@ ROOT CAUSE C:
   Owner / By When:
   Counterfactual test on fix:
 
-Priority order (Impact × Recurrence × Actionability):
+Root cause interactions: [ ] None  [ ] AND-causation  [ ] Amplification  [ ] Conflict
+  Details:
+
+Priority order (Impact × Recurrence × Actionability, scale 1–5 each):
 
 --- VERIFICATION ---
 
+Verification window: [how long / what trigger to wait for]
 Each root cause fix confirmed? [ ] A  [ ] B  [ ] C
 Any recurrence? [ ] Yes → return to Layer 2   [ ] No
 Priors updated:

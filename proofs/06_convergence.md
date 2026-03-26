@@ -86,7 +86,9 @@ The posterior concentrates all probability mass on the true root cause. ∎
 
 ## Formal Name
 
-This result is a special case of the **Bernstein-von Mises theorem**, which guarantees that Bayesian posteriors converge to the true parameter value under regularity conditions.
+This result is a special case of **Bayesian consistency for discrete hypothesis testing** (Doob, 1949). In a finite hypothesis space, the posterior concentrates on the true hypothesis with probability 1 as the number of independent observations grows, provided the true hypothesis has nonzero prior probability and the likelihood model is correctly specified.
+
+**Note:** This is sometimes informally associated with the Bernstein-von Mises theorem, but BvM applies to continuous parametric models and concerns the asymptotic normality of the posterior — a different property. The correct theoretical foundation for HTSA's discrete hypothesis space is Doob's consistency theorem.
 
 ---
 

@@ -103,6 +103,24 @@ This is called **Best-First Search** (greedy). It picks the most promising node 
 
 ---
 
+## When to Use Which Strategy
+
+| Condition | Use | Why |
+|---|---|---|
+| You have a strong hypothesis with evidence | **Best-First / DFS** | Follow the high-probability path directly |
+| Multiple plausible causes, no clear leader | **BFS** | Gather first-level evidence to distinguish before committing |
+| Active crisis, time-constrained | **DFS** | Find one actionable root cause fast; completeness can wait |
+| High stakes, must not miss any cause | **BFS with low θ** | Systematic coverage over speed |
+| Strong priors from base rates | **Best-First** | Probability estimates are reliable enough to guide selection |
+| No base rates, unfamiliar domain | **BFS** | Don't trust your heuristic when you have no data |
+
+**Switching strategies mid-investigation:**
+- If DFS hits two dead ends in a row → switch to BFS at the last branch point with unexplored children
+- If BFS at depth 1 produces a clear probability leader (P > 0.6) → switch to DFS on that branch
+- If Best-First is spreading effort across too many branches without closing any → switch to DFS on the highest-probability open branch
+
+---
+
 ## Backtracking
 
 When a branch hits a dead end — the Why chain doesn't lead anywhere, or evidence rules it out — you **backtrack**: return to the last branch point and try a different path.
@@ -120,7 +138,7 @@ Why 3: "The process failed because the config was wrong"
 Why 4: "The config was wrong because the process failed"
 ```
 
-This is circular reasoning. Both DFS and BFS detect cycles by tracking visited nodes. If you find yourself repeating a Why you've already answered, you are in a cycle. Stop, backtrack, and reframe the question.
+This may be circular reasoning — or it may be a genuine feedback loop. Both DFS and BFS detect cycles by tracking visited nodes. If you find yourself repeating a Why you've already answered, see the **[Feedback Loops protocol in 01 Graph Theory](01_graph_theory.md)** for how to handle it: break the cycle at the intervention point rather than treating it as an error.
 
 ---
 

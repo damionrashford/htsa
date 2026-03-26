@@ -60,6 +60,12 @@ The **prior** is your belief before you see evidence. It should be based on:
 
 A good investigator does not start with equal priors on all hypotheses. They use knowledge to set informed starting points. Then they update.
 
+**The line between informed priors and anchoring bias** (see **[07 Cognitive Biases](07_cognitive_biases.md)**):
+- An **informed prior** is based on **documented frequency data** — "80% of past outages in this system were deploy-related" from an incident database. This is data.
+- An **anchoring prior** is based on **personal recall or gut feeling** — "I think it's usually deploys" from memory. This is availability bias disguised as domain knowledge.
+
+**The test:** Can you cite the source of your prior? If it comes from a base rate you can point to, use it. If it comes from what feels right, treat it as a rough estimate and be prepared to move it substantially when evidence arrives.
+
 ---
 
 ## The Bayesian Investigation Loop
@@ -68,10 +74,50 @@ A good investigator does not start with equal priors on all hypotheses. They use
 1. Set priors on all hypotheses (branches)
 2. Gather evidence at the current Why node
 3. Update probabilities using Bayes' theorem
-4. Prune low-probability branches (below threshold — a common default is 5%; set this before starting)
+4. Prune low-probability branches (below threshold; set this before starting — see note on domain-appropriate thresholds below)
 5. Follow highest-probability branch
 6. Repeat until one hypothesis dominates
 ```
+
+---
+
+## How to Estimate Probabilities in Practice
+
+Bayes' theorem is precise. Human probability estimation is not. Here is how to bridge the gap:
+
+**For priors — use one of these methods (in order of preference):**
+
+```
+1. Frequency data:  "Of the last 50 outages, 35 were deploy-related"
+                    → P(deploy) = 0.70
+
+2. Reference class:  "In systems like ours, the industry benchmark is
+                     ~40% config, ~30% capacity, ~30% code defect"
+                    → Use these as starting priors
+
+3. Structured estimate:  When no data exists, use a calibrated scale:
+   Almost certain:  0.90+
+   Likely:          0.70–0.89
+   Possible:        0.30–0.69
+   Unlikely:        0.10–0.29
+   Very unlikely:   < 0.10
+
+   Assign each hypothesis a label, then convert to numbers.
+   Ensure all priors sum to 1.0 (normalize if needed).
+```
+
+**For likelihoods P(evidence | hypothesis):**
+
+Ask: "If this hypothesis were true, how expected is this evidence?"
+```
+   Would definitely see this evidence:    P(e|H) = 0.90–0.99
+   Would probably see it:                 P(e|H) = 0.60–0.89
+   Might or might not see it:             P(e|H) = 0.40–0.59
+   Would be surprised to see it:          P(e|H) = 0.10–0.39
+   Would be shocked to see it:            P(e|H) = 0.01–0.09
+```
+
+**The key insight:** Approximate probabilities that get updated by evidence are far better than no probabilities at all. Even rough estimates create a ranking. Bayesian updating corrects miscalibrated priors over time — that is its core property.
 
 ---
 
@@ -97,6 +143,23 @@ With base rates:     Deploy at 80%, config at 15%, other at 5%
 
 Same evidence, very different investigation paths.
 ```
+
+---
+
+## Domain-Appropriate Pruning Thresholds
+
+The pruning threshold must be set before the investigation begins. Different domains warrant different thresholds:
+
+```
+General investigation:               5%  (θ = 0.05)
+Safety-critical (aviation, nuclear,
+  medical, infrastructure):          1% or lower (θ ≤ 0.01)
+  — any plausible cause that could harm people must be investigated
+Exploratory / low-stakes:           10%  (θ = 0.10)
+  — faster convergence when consequences are reversible
+```
+
+In safety-critical domains, a 5% cause can kill. Err toward θ → 0 when lives or critical systems are at stake.
 
 ---
 

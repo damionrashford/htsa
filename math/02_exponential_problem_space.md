@@ -44,7 +44,7 @@ Total nodes = (3^6 - 1) / 2 = 364
 
 ## Why Investigations Feel Overwhelming
 
-Without structure, your brain is attempting to hold an exponential tree in working memory. Human working memory holds roughly **7 items** (Miller's Law). An unstructured investigation can have dozens or hundreds of paths.
+Without structure, your brain is attempting to hold an exponential tree in working memory. Human working memory holds roughly **4 items** (Cowan, 2001 — a refinement of Miller's 1956 estimate of 7±2). An unstructured investigation can have dozens or hundreds of paths.
 
 The framework solves this by:
 1. **Fixing the entry point** — the 5 Ws give you one defined starting node

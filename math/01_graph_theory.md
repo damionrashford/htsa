@@ -48,7 +48,7 @@ Graph theory gives the framework **formal properties**:
 
 - **Reachability** — Can you get from the surface Why to a root cause? If not, the investigation has a gap.
 - **Convergence** — Two separate branches pointing to the same root cause is called a **convergent node**. It means that root cause is more likely and more impactful.
-- **Cycles** — If a Why chain loops back to itself, something is wrong. The investigation is circular. Graph theory catches this.
+- **Cycles** — If a Why chain loops back to itself, you have either circular reasoning (a logic error) or a genuine feedback loop (a real system property). See below.
 - **Depth** — The longest path from surface to root tells you the complexity of the problem.
 
 ---
@@ -63,7 +63,27 @@ Graph theory gives the framework **formal properties**:
 [Why 2b] ──────┘
 ```
 
-When two independent branches both lead to the same root cause, that is **not a coincidence**. That root cause is the real target. Graph theory makes this visible.
+When two independent branches both lead to the same root cause, that root cause is a strong candidate. Graph theory makes this visible.
+
+**Caution:** Before treating convergence as confirmation, check for confounders. Two branches can point to the same node because a hidden variable causes both paths to appear connected. If the two branches share a common upstream cause, convergence may be spurious — a confounder, not confirmation. Apply the counterfactual test independently to each path.
+
+---
+
+## Feedback Loops — A Known Limitation
+
+The framework models investigations as DAGs (acyclic). This is a modeling choice, not a universal truth. Some real systems have genuine feedback loops:
+
+```
+[Toxic culture] → [Turnover] → [Understaffing] → [Overwork] → [Toxic culture]
+[Poverty] → [Poor education] → [Low income] → [Poverty]
+```
+
+**The DAG model cannot directly represent cycles.** When you encounter a feedback loop:
+
+1. **Identify the loop.** If a Why chain leads back to a node you've already visited, you have a cycle.
+2. **Break the cycle at the intervention point.** Ask: "Where in this loop can I intervene?" The point of intervention becomes the root cause for this investigation.
+3. **Document the full loop.** Record that the root cause is part of a cycle, not a terminal node. The fix may need to address the reinforcing dynamic, not just a single link.
+4. **Accept the limitation.** A DAG models the investigation's *decomposition* of the problem, not necessarily the problem's true causal structure. Cyclic systems require a DAG approximation — break the cycle where you can act.
 
 ---
 

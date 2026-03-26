@@ -48,7 +48,9 @@ P(Y | X)       = probability of Y given that we observe X
 P(Y | do(X))   = probability of Y given that we intervene and SET X
 ```
 
-These are different. Observing that it's raining does not cause wet ground. Intervening (making it rain) does. The 5 Whys is always asking the **do(X)** question — not just "did these things co-occur?" but "did this actively produce that?"
+These are different. Observing that it's raining does not cause wet ground. Intervening (making it rain) does. The 5 Whys *should* be asking the **do(X)** question — not just "did these things co-occur?" but "did this actively produce that?"
+
+**In practice**, most investigators default to Level 1 (association) questions: "What happened when X was present?" The counterfactual test is what forces the investigation to Level 2/3: "Would the problem still have occurred if X had NOT been present?" Without the counterfactual test, the 5 Whys can degenerate into a chain of correlations.
 
 ---
 
@@ -88,7 +90,7 @@ Both the deploy and the crash correlate. But the real cause is the traffic spike
 
 1. **Correlation is not causation.** Always test the counterfactual.
 2. **Confounders exist.** Look for hidden variables that explain the correlation.
-3. **Causation requires a mechanism.** How did X produce Y? If you cannot state the mechanism, you have not established cause.
+3. **Causation is strengthened by a stated mechanism.** How did X produce Y? A stated mechanism makes the causal claim stronger and more testable. However, causal inference is possible without a complete mechanism when statistical evidence is overwhelming — epidemiologists established that smoking causes cancer (Bradford Hill, 1965) before the biological mechanism was fully understood. When the mechanism is unknown, demand stronger statistical evidence (Tier 1) to compensate.
 4. **The DAG is the model.** Drawing your Why tree IS doing causal inference. The structure of the graph encodes your causal assumptions.
 
 ---

@@ -20,9 +20,9 @@ Not all evidence is created equal. Four tiers, from strongest to weakest:
 ┌─────────────────────────────────────────────┐
 │  TIER 1 — Physical / Instrumental           │
 │  Direct measurement, logs, sensor data,     │
-│  recordings, statistical analysis (A/B      │
-│  tests, regression). The event left a       │
-│  measurable record.                         │
+│  recordings, controlled experiments (A/B    │
+│  tests). The event left a measurable        │
+│  record.                                    │
 ├─────────────────────────────────────────────┤
 │  TIER 2 — Observational                     │
 │  What a witness directly saw, heard, or     │
@@ -31,7 +31,9 @@ Not all evidence is created equal. Four tiers, from strongest to weakest:
 │  TIER 3 — Inferential                       │
 │  What can be reasonably concluded from      │
 │  Tier 1 or Tier 2 evidence, given a         │
-│  stated causal mechanism.                   │
+│  stated causal mechanism. Includes          │
+│  regression analysis and statistical        │
+│  modeling (model-dependent results).        │
 ├─────────────────────────────────────────────┤
 │  TIER 4 — Testimonial / Reconstructive      │
 │  What someone believes happened, recalled   │
@@ -156,6 +158,17 @@ For a Why node to be closed as a finding (not a hypothesis), it must meet this s
 
 A node that passes this standard is a **finding**.
 A node that does not is a **hypothesis** — label it as such and continue gathering.
+
+**Evidence-scarce investigations:** Some domains (historical analysis, cold cases, strategic planning) may structurally lack Tier 1 or Tier 2 evidence. When the minimum standard cannot be met:
+1. Label the node as a **best-available hypothesis** (not a finding)
+2. Document what evidence *would* be needed to elevate it to a finding
+3. Record the highest-tier evidence available and its limitations
+4. Apply stricter counterfactual and independence checks to compensate for weaker evidence
+5. Flag the conclusion as provisional — subject to revision if better evidence emerges
+
+This does not lower the standard. It makes the investigation's confidence level explicit.
+
+**Note on the counterfactual test:** The counterfactual test itself (step 3 above) is an inferential judgment — it is Tier 3 evidence, not Tier 1 or 2. The counterfactual test validates the *causal relationship*, while criteria 1 requires separate Tier 1/2 evidence for the *factual claim*. Both are needed: evidence that the cause occurred (Tier 1/2) and reasoning that the cause explains the effect (counterfactual test, Tier 3).
 
 ---
 

@@ -70,21 +70,37 @@ OUTPUT
 
   ── LAYER 3: RESOLUTION ──
 
-12.  FOR EACH r ∈ R:
+12.  reopen_count ← {}    // tracks re-openings per node
+     MAX_REOPEN ← 3       // configurable bound
+
+     FOR EACH r ∈ R:
        RESOLVE(r)
        // Assign: fix, mitigate, or accept
        // Run counterfactual test on the proposed fix:
        //   "If this fix had existed, would the problem still have occurred?"
-       //   If yes → fix targets a symptom, go deeper (return r to OPEN)
+       //   If yes → fix targets a symptom, go deeper:
+       //     IF reopen_count[r] < MAX_REOPEN:
+       //       reopen_count[r] ← reopen_count[r] + 1
+       //       return r to OPEN
+       //     ELSE:
+       //       ESCALATE(r) — flag as requiring a new investigation
        //   If no  → fix is correctly targeted
        // Assign owner and deadline
        // Priority = Impact(r) × Recurrence(r) × Actionability(r)
 
   ── LAYER 4: VERIFICATION & LEARNING ──
 
-13.  FOR EACH r ∈ R:
+13.  MAX_VERIFY ← 3       // configurable bound
+
+     FOR EACH r ∈ R:
        IMPLEMENT fix for r
        IF VERIFY(r) = false:
+         IF reopen_count[r] ≥ MAX_VERIFY:
+           ESCALATE(r)
+           // Problem is beyond this investigation's scope
+           // Launch a separate, independent investigation
+           CONTINUE
+         reopen_count[r] ← reopen_count[r] + 1
          // Problem recurred → root cause identification was incomplete
          // Return r to OPEN as a new origin node (recursive property)
          OPEN ← {r}
@@ -131,6 +147,37 @@ EXPAND(v):
   RETURN {c₁, c₂, ..., cₖ}
 ```
 
+**How to generate good children (the EXPAND method):**
+
+EXPAND is the most consequential step — the investigation can only find causes that someone thinks to generate. Use these techniques to maximize coverage:
+
+```
+1. CATEGORY SCAN — check each cause class:
+   □ People      — who acted, and what enabled them?
+   □ Process     — what step failed or was missing?
+   □ Technology  — what system, tool, or component failed?
+   □ Environment — what external condition contributed?
+   □ Information — what was unknown, misunderstood, or miscommunicated?
+
+2. INVERSION — ask the opposite:
+   "What would have had to be true for v to NOT occur?"
+   Each answer is a candidate child (the absence of a preventive condition).
+
+3. TEMPORAL DECOMPOSITION — break the timeline:
+   "What changed just before v became true?"
+   Recent changes are high-probability children.
+
+4. ANALOGICAL TRANSFER — ask:
+   "In similar past investigations, what were the causes at this level?"
+   Historical root causes seed the child list.
+
+5. ADVERSARIAL GENERATION — assign one person to ask:
+   "What cause would we NOT want to find?"
+   This surfaces politically uncomfortable but real causes.
+```
+
+The goal is not exhaustive enumeration (impossible), but structured coverage across cause categories. A single-category EXPAND (e.g., only technical causes) will miss entire branches.
+
 ### COUNTERFACTUAL_TEST(c, e)
 
 ```
@@ -169,7 +216,9 @@ RESOLVE(r):
   Propose concrete change
   Run counterfactual test on proposed fix:
     "If this fix had existed before the problem, would the problem still have occurred?"
-    IF yes → fix targets a symptom, not the root cause → return r to OPEN
+    IF yes → fix targets a symptom, not the root cause
+      IF reopen_count[r] < MAX_REOPEN → return r to OPEN, increment reopen_count[r]
+      ELSE → ESCALATE(r) — requires a new, separate investigation
     IF no  → fix is correctly targeted → proceed
   Assign owner and deadline
   Compute priority: Impact(r) × Recurrence(r) × Actionability(r)

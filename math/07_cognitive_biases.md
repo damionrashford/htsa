@@ -91,7 +91,14 @@ The correct tree continues:
                        └──► ROOT CAUSE: systemic gap
 ```
 
-**Countermeasure:** Any Why answer that names a person is rarely a root cause — always ask one more Why: "Why was the person in a position to cause this?" The root cause is almost always a system condition, not a person. (Exception: deliberate acts — fraud, sabotage, targeted attacks — where the person's intent *is* the cause. Even then, ask whether a systemic control should have prevented it.)
+**Countermeasure:** Any Why answer that names a person should trigger one more Why: "Why was the person in a position to cause this?" In most cases, the root cause is a system condition, not a person.
+
+**Important exceptions where the person IS the root cause:**
+- **Deliberate acts** — fraud, sabotage, targeted attacks — where intent is the cause
+- **Gross negligence** — where an individual violated clear, well-communicated standards
+- **Unique authority** — where one person had unchecked power and exercised it recklessly
+
+Even in these cases, ask whether a systemic control *should* have prevented it. But do not force a systemic explanation when the evidence points to individual responsibility. Doing so is itself a bias — the inverse of the fundamental attribution error.
 
 ---
 
@@ -160,6 +167,8 @@ Anchored update:        P_posterior ≈ P_anchor ± small_adjustment
 ```
 
 **Countermeasure:** Do not name a leading hypothesis before the 5 Ws are complete. Generate all plausible hypotheses simultaneously before assigning any probability. No single hypothesis should have special status until evidence creates it.
+
+**The distinction from informed priors:** Setting a prior based on documented base rates (see **[05 Bayesian Reasoning](05_bayesian_reasoning.md)**) is not anchoring — it is data. Anchoring occurs when the prior comes from recall, intuition, or whoever spoke first. **The test:** Can you cite the data source for your prior? If yes, it is an informed prior. If no, it is an anchor.
 
 ---
 

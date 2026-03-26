@@ -1,6 +1,6 @@
 <h1 align="center">Information Theory</h1>
 
-> Every Why answer reduces uncertainty. That is not a metaphor — it is the definition of information.
+> Every *correct* Why answer reduces uncertainty. That is not a metaphor — it is the definition of information.
 
 ---
 
@@ -29,7 +29,9 @@ H(X) = -Σ P(x) log₂ P(x)
 
 When you begin an investigation, you have **maximum uncertainty** about the root cause. There are many possible causes. Entropy is high.
 
-Each Why answer you collect **reduces the possibility space**. Entropy drops. You are gaining information in the precise mathematical sense.
+Each *correct* Why answer you collect **reduces the possibility space**. Entropy drops. You are gaining information in the precise mathematical sense.
+
+**Caveat:** An *incorrect* Why answer can increase entropy by introducing false branches into the tree. If a wrong answer at depth 2 sends the investigation down two spurious paths, the search space expands rather than contracts. This is why the framework demands evidence at every node — evidence is what ensures the answer is correct and the entropy reduction is real. An answer without evidence is a guess that may increase rather than decrease uncertainty.
 
 ```
 START:    High entropy  — root cause is one of many possibilities

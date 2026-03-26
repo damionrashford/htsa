@@ -1,52 +1,67 @@
-# How to Solve Anything (HTSA)
+# CLAUDE.md
 
-> SOMETHING HAPPENED → TO SOMEONE → SOMEWHERE → AT SOME POINT → FOR SOME REASON
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-A universal investigation framework combining the 5 Ws and 5 Whys.
-Applicable to any problem, in any discipline, at any scale.
+## What This Is
 
----
+HTSA (How to Solve Anything) is a pure documentation repository — no code, no build system, no tests. All content is Markdown. The project formalizes a universal investigation framework combining the 5 Ws and 5 Whys, backed by eight mathematical foundations and seven formal proofs.
 
-## Start Here
-
-[FRAMEWORK.md](FRAMEWORK.md) — The complete framework: situation map, causal chain, resolution layer, universal application, rules, and investigation template.
-
----
-
-## The Math
-
-The framework has eight mathematical foundations. Read them in order — each one builds on the last.
-
-[math/](math/) — Math foundations folder
-
-| Step | File | Concept |
-|---|---|---|
-| 1 | [math/00_index.md](math/00_index.md) | Index — how the eight concepts connect |
-| 2 | [math/01_graph_theory.md](math/01_graph_theory.md) | Graph Theory — the structure of every investigation |
-| 3 | [math/02_exponential_problem_space.md](math/02_exponential_problem_space.md) | Exponential Problem Space — why structure matters |
-| 4 | [math/03_causal_inference.md](math/03_causal_inference.md) | Causal Inference — proving what caused what |
-| 5 | [math/04_information_theory.md](math/04_information_theory.md) | Information Theory — measuring investigative progress |
-| 6 | [math/05_bayesian_reasoning.md](math/05_bayesian_reasoning.md) | Bayesian Reasoning — weighing competing causes |
-| 7 | [math/06_search_algorithms.md](math/06_search_algorithms.md) | Search Algorithms — how to move through the Why tree |
-| 8 | [math/07_cognitive_biases.md](math/07_cognitive_biases.md) | Cognitive Biases — what corrupts the investigation |
-| 9 | [math/08_evidence_evaluation.md](math/08_evidence_evaluation.md) | Evidence Evaluation — not all evidence is equal |
-| 10 | [proofs/00_index.md](proofs/00_index.md) | Formal Proofs — provable guarantees of the algorithm |
-
----
-
-## The Chain
+## Repository Structure
 
 ```
-FRAMEWORK.md
-    └─► math/00_index.md
-          └─► math/01_graph_theory.md
-                └─► math/02_exponential_problem_space.md
-                      └─► math/03_causal_inference.md
-                            └─► math/04_information_theory.md
-                                  └─► math/05_bayesian_reasoning.md
-                                        └─► math/06_search_algorithms.md
-                                                └─► math/07_cognitive_biases.md
-                                                        └─► math/08_evidence_evaluation.md
-                                                                └─► proofs/00_index.md
-                                                                        └─► FRAMEWORK.md
+FRAMEWORK.md           ← The complete framework (4 layers, depth criteria, templates)
+math/
+  00_index.md          ← How the 8 math concepts connect
+  01-08_*.md           ← Graph theory → exponential space → causal inference →
+                         information theory → Bayesian reasoning → search algorithms →
+                         cognitive biases → evidence evaluation
+proofs/
+  00_index.md          ← Proof overview, assumptions, and limitations
+  01-07_*.md           ← Formal definitions → algorithm → termination →
+                         completeness → optimality → convergence → information gain
+examples/
+  00_index.md          ← Worked examples with annotation key
+  01_*.md              ← Domain-specific walkthroughs
+assets/                ← SVG diagrams referenced by DIAGRAMS.md
+DIAGRAMS.md            ← Visual references for the framework and algorithm
 ```
+
+## Reading Order and Document Chain
+
+Documents form a circular chain. Each file has prev/next navigation links at the bottom. The intended reading order is:
+
+FRAMEWORK.md → math/00-08 → proofs/00-07 → back to FRAMEWORK.md
+
+## Critical Cross-File Invariants
+
+When editing any file, these definitions must stay consistent across all documents that reference them:
+
+- **Four Layers**: Situation Map (Layer 1), Causal Chain (Layer 2), Resolution (Layer 3), Verification & Learning (Layer 4) — used in FRAMEWORK.md, proofs/02_algorithm.md
+- **Evidence tiers (4 tiers)**: Tier 1 physical/instrumental, Tier 2 observational, Tier 3 inferential, Tier 4 testimonial — defined in math/08, referenced in proofs/01
+- **Depth criteria (4 tests)**: Actionability, Counterfactual Clarity, System Boundary, Diminishing Returns — defined in FRAMEWORK.md, formalized in proofs/01 Definition 4, used in proofs/02 DEPTH_CRITERIA subroutine
+- **Pruning thresholds**: 5% general, ≤1% safety-critical, 10% exploratory — must match across math/05, proofs/01, and FRAMEWORK.md templates
+- **Algorithm bounds**: MAX_REOPEN=3, MAX_VERIFY=3 with ESCALATE path — proofs/02 and proofs/03 must agree
+- **Optimality qualifier**: "greedy-optimal, not globally optimal" — proofs/05 and proofs/00_index
+- **Convergence theorem**: Doob (1949), NOT Bernstein-von Mises — proofs/06
+- **Information theory qualifier**: "Every *correct* Why answer" — math/00_index and math/04
+
+## Markdown Conventions
+
+- Titles use `<h1 align="center">` HTML tags, not `#`
+- Tables use `<div align="center">` wrappers in README.md; plain markdown elsewhere
+- Navigation footers at the bottom of every math/ and proofs/ file: `← Previous · Next →`
+- Bold links in references: `**[display text](path)**`
+- Math notation uses code blocks, not LaTeX
+- No emoji in content files (README.md is the exception)
+
+## Style Rules
+
+- Every sentence earns its place — no filler
+- Match existing tone: direct, precise, no hedging unless formally qualified
+- Causal claims require counterfactual framing
+- New mathematical content requires sources or formal justification
+- When adding limitations or caveats, state them as explicit scope boundaries, not apologies
+
+## Templates
+
+FRAMEWORK.md contains two investigation templates (Linear and Branching) that must include: MODE field, PRUNING THRESHOLD, probability per node, Finding/Hypothesis status, verification window, and depth criteria checkboxes. The Branching template additionally requires: pruned branches list, feedback loops field, root cause interactions, and priority scale notation.

@@ -66,7 +66,7 @@ Each concept is a layer. They stack on top of each other:
 
 **Causal Inference** — Correlation is not causation; every Why claim must pass the counterfactual test.
 
-**Information Theory** — Every Why answer reduces entropy; a good question is one that maximizes information gain.
+**Information Theory** — Every *correct* Why answer reduces entropy; a good question is one that maximizes information gain.
 
 **Bayesian Reasoning** — Start with priors, gather evidence, update probabilities, converge on truth.
 

@@ -76,7 +76,7 @@ e = (source, tier, timestamp, direction)
 where:
   source:     origin of the evidence (log, witness, measurement, etc.)
   tier:       evidence quality tier:
-                1 = physical/instrumental (logs, sensors, statistical analysis)
+                1 = physical/instrumental (logs, sensors, controlled experiments)
                 2 = observational (direct witness observation at time of event)
                 3 = inferential (reasoned conclusion from Tier 1 or 2 evidence)
                 4 = testimonial/reconstructive (recalled after the fact)
@@ -119,7 +119,14 @@ The entropy of an investigation at any point is:
 ```
 H(G) = -Σ P(vᵢ) × log₂ P(vᵢ)
 
-summed over all active (non-pruned) leaf nodes.
+summed over all active (non-pruned) frontier nodes —
+nodes that are either unexpanded leaves (not yet explored deeper)
+or confirmed root causes (exploration complete on that branch).
+
+Note: For measuring remaining investigative uncertainty, the most
+relevant subset is the frontier nodes (unexpanded leaves only).
+Confirmed root causes have low uncertainty by definition. When
+tracking "how much work remains," compute entropy over the frontier.
 ```
 
 - **Maximum entropy**: all causes equally likely (investigation has not started)
@@ -161,7 +168,30 @@ A pruning threshold **θ** ∈ (0, 1) is set before the investigation begins. An
 IF P(v | e) < θ  →  remove v from active exploration
 ```
 
-A common default is θ = 0.05 (5%).
+Common defaults by domain:
+
+```
+General investigation:         θ = 0.05 (5%)
+Safety-critical (aviation,
+  nuclear, medical):           θ = 0.01 (1%) or lower
+                               — any plausible cause that could cause harm
+                                 must be investigated regardless of probability
+Exploratory / research:        θ = 0.10 (10%)
+                               — faster convergence when consequences are low
+```
+
+The threshold must be set before the investigation begins to avoid sunk cost bias. In safety-critical domains, err toward θ → 0.
+
+**Pruning recovery:** Pruning is normally permanent — once a branch drops below θ, it is removed from active exploration. However, if evidence discovered later on a different branch retroactively raises the probability of a pruned branch, the investigator may **un-prune** it:
+
+```
+IF new evidence e′ is discovered such that P(v_pruned | e′) ≥ θ:
+  → Restore v_pruned to OPEN
+  → Document the evidence that triggered restoration
+  → This counts as a re-opening (subject to MAX_REOPEN bound)
+```
+
+Un-pruning is rare but important. It prevents the framework from permanently discarding a valid hypothesis due to insufficient early evidence. To enable this, maintain a **pruned list** rather than deleting pruned nodes entirely.
 
 ---
 

@@ -36,28 +36,39 @@ This means at any point during execution, the next node explored is always the m
 
 Let r* be the root cause with the highest posterior probability among all root causes in G.
 
-Consider the path from v₀ to r*. Every node on this path has posterior probability ≥ P(r*) at the time it is explored (because probability flows downward — a child's probability cannot exceed its parent's probability times the likelihood ratio).
+Since EXTRACT_MAX always selects the highest-probability node from OPEN, the algorithm always expands the most promising node across all active branches. The nodes on the path to r* will be prioritized whenever their posteriors are highest among all nodes in OPEN.
 
-Since EXTRACT_MAX always selects the highest-probability node, the nodes on the path to r* are explored before nodes on paths to lower-probability root causes, provided their posteriors remain highest after Bayesian updates.
-
-When r* is reached and passes depth criteria, it is the first root cause added to R.
+When r* is reached and passes depth criteria, it is added to R. Because every node explored before r* either (a) was on the path to r*, (b) was a higher-probability intermediate node on another path, or (c) was pruned — r* is the first root cause added to R, provided the priority ordering reflects true probabilities.
 
 **Step 4: This is best-first search.**
 
-The algorithm is equivalent to best-first search with P(v | evidence) as the evaluation function. Best-first search is optimal when the evaluation function is consistent — meaning the estimated value of a node is never greater than the estimated value of its parent minus the edge cost.
+The algorithm is equivalent to best-first search (greedy) with P(v | evidence) as the evaluation function.
 
-In HTSA, consistency holds because:
+**Important qualification on consistency:**
+
+In classical best-first search, optimality requires a consistent evaluation function — where a child's value never exceeds its parent's. In HTSA, this condition does **not** always hold:
 
 ```
-P(child | evidence) ≤ P(parent | evidence)
+P(child | evidence) CAN exceed P(parent | evidence)
 
-in the worst case (when evidence fully supports the child),
-and typically:
+Example: parent "deploy-related cause" at P = 0.30
+         child "specific config key was wrong" at P = 0.85
+         after strong Tier 1 log evidence for the child
 
-P(child | evidence) = P(parent | evidence) × P(child | parent, evidence)
+A specific explanation WITH strong evidence CAN be more probable
+than a general category WITHOUT specific evidence.
 ```
 
-The probability of a specific child is always ≤ the probability of its parent (a specific explanation is never more likely than the general category containing it). ∎
+This means HTSA's best-first search is **greedy-optimal, not globally optimal**. It finds the root cause that appears most probable based on the evidence gathered so far, following the highest-posterior path at each step. It is not guaranteed to find the globally most probable root cause if strong evidence for a deep node arrives after the algorithm has already committed to a different branch.
+
+**When is the greedy order correct?**
+
+The greedy order matches the true optimal order when:
+1. Bayesian updates are computed correctly (no bias)
+2. Evidence quality is sufficient to distinguish branches early
+3. Priors reflect actual base rates
+
+Under these conditions, the algorithm explores the most promising path first and finds the highest-probability root cause first. ∎
 
 ---
 
