@@ -1,9 +1,16 @@
 <h1 align="center">How to Solve Anything</h1>
 
-> SOMETHING HAPPENED → TO SOMEONE → SOMEWHERE → AT SOME POINT → FOR SOME REASON
+<p align="center"><strong>A universal investigation framework combining the 5 Ws and 5 Whys.</strong><br>Applicable to any problem, in any discipline, at any scale.</p>
 
-**How to Solve Anything (HTSA)** — A universal investigation framework combining the 5 Ws and 5 Whys.
-Applicable to any problem, in any discipline, at any scale.
+<p align="center">
+<code>SOMETHING HAPPENED → TO SOMEONE → SOMEWHERE → AT SOME POINT → FOR SOME REASON</code>
+</p>
+
+---
+
+<p align="center">
+<strong><a href="FRAMEWORK.md">Framework</a></strong> · <strong><a href="math/00_index.md">The Math</a></strong> · <strong><a href="DIAGRAMS.md">Diagrams</a></strong>
+</p>
 
 ---
 
@@ -17,9 +24,10 @@ Together they tell you *what to do about it.*
 
 ---
 
-## How It Works
+## The Four Layers
 
 ### Layer 1 — Situation Map (5 Ws)
+
 Establish the full picture before drilling into cause.
 
 | Question | What It Captures |
@@ -31,6 +39,7 @@ Establish the full picture before drilling into cause.
 | **Why** | The surface-level, immediately apparent reason |
 
 ### Layer 2 — Causal Chain (5 Whys)
+
 Start at the surface Why. Ask why again. Keep going until you hit something you can actually change.
 
 ```
@@ -45,12 +54,14 @@ Why (surface)
 Whys can and should branch. Real problems are rarely single-cause.
 
 ### Layer 3 — Resolution
+
 Map each root cause to a concrete change. Apply the counterfactual test:
 > "If this change had existed before the problem occurred, would the problem still have happened?"
 
 Each root cause is either **fixed**, **mitigated**, or **accepted**.
 
 ### Layer 4 — Verification and Learning
+
 Confirm the fix worked. Update your priors. The framework compounds over time — but only if learning is explicit.
 
 ---
@@ -82,14 +93,6 @@ The framework is an applied graph traversal algorithm for causal inference — w
 | **[06](math/06_search_algorithms.md)** | Search Algorithms | How do you move through the Why tree? |
 | **[07](math/07_cognitive_biases.md)** | Cognitive Biases | What corrupts the investigation? |
 | **[08](math/08_evidence_evaluation.md)** | Evidence Evaluation | How do you know which evidence to trust? |
-
----
-
-## Start Here
-
-- **[FRAMEWORK.md](FRAMEWORK.md)** — The complete framework with templates
-- **[math/00_index.md](math/00_index.md)** — How the math connects
-- **[DIAGRAMS.md](DIAGRAMS.md)** — Framework diagram + algorithm flowchart
 
 ---
 
