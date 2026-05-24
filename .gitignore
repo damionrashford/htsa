@@ -1,11 +1,7 @@
-__pycache__/
 .claude/
-*.egg-info/
 node_modules/
 site/node_modules/
 site/dist/
-.pytest_cache/
-engine/.venv/
 .vscode/
 packages/*/dist/
 packages/*/node_modules/
