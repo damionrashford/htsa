@@ -3,14 +3,131 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="How to Solve Anything — a structured root cause analysis framework combining the 5 Ws and 5 Whys with Bayesian probability, causal inference, and LLM integration." />
-    <meta property="og:title" content="How to Solve Anything (HTSA)" />
-    <meta property="og:description" content="Probabilistic RCA framework. DAG traversal + Bayesian updating + causal counterfactual tests. Domain-agnostic. LLM-assisted or fully manual." />
+
+    <!-- Primary SEO -->
+    <title>HTSA — How to Solve Anything | Probabilistic Root Cause Analysis Framework</title>
+    <meta name="description" content="HTSA formalizes root cause analysis as a provably convergent algorithm: Bayesian updating + causal DAG traversal + 5 Ws/5 Whys. Domain-agnostic. Python engine. Zero dependencies." />
+    <meta name="keywords" content="root cause analysis framework, 5 whys algorithm, Bayesian root cause analysis, causal inference framework, incident postmortem framework, SRE postmortem tool, structured root cause analysis, causal DAG investigation, LLM root cause analysis, Python RCA library, 5 ws 5 whys, how to solve anything, HTSA framework, investigation algorithm, structured problem solving" />
+    <meta name="author" content="Damion Rashford" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://damionrashford.github.io/htsa/" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <title>How to Solve Anything — HTSA</title>
+    <meta property="og:url" content="https://damionrashford.github.io/htsa/" />
+    <meta property="og:site_name" content="HTSA" />
+    <meta property="og:title" content="HTSA — How to Solve Anything | Probabilistic Root Cause Analysis Framework" />
+    <meta property="og:description" content="Root cause analysis as a formal algorithm: Bayesian updating + causal DAG traversal + 5 Ws/5 Whys. Provably convergent. Python engine. Domain-agnostic." />
+    <meta property="og:image" content="https://damionrashford.github.io/htsa/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="HTSA — How to Solve Anything | Probabilistic RCA Framework" />
+    <meta name="twitter:description" content="Root cause analysis as a formal algorithm. Bayesian updating + causal DAG + 5 Ws/5 Whys. Provably convergent. Python engine." />
+    <meta name="twitter:image" content="https://damionrashford.github.io/htsa/og-image.png" />
+    <meta name="twitter:creator" content="@damionrashford" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://damionrashford.github.io/htsa/#software",
+          "name": "HTSA — How to Solve Anything",
+          "alternateName": ["HTSA", "How to Solve Anything", "HTSA Framework"],
+          "url": "https://damionrashford.github.io/htsa/",
+          "description": "A structured, probabilistic root cause analysis framework combining the 5 Ws and 5 Whys with Bayesian updating, causal DAG traversal, and LLM integration. Domain-agnostic. Formally proved convergent.",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Any",
+          "programmingLanguage": "Python",
+          "softwareVersion": "1.0.0",
+          "license": "https://opensource.org/licenses/MIT",
+          "codeRepository": "https://github.com/damionrashford/htsa",
+          "author": {
+            "@type": "Person",
+            "name": "Damion Rashford",
+            "url": "https://github.com/damionrashford"
+          },
+          "keywords": [
+            "root cause analysis",
+            "5 whys",
+            "5 ws framework",
+            "Bayesian reasoning",
+            "causal inference",
+            "causal DAG",
+            "incident postmortem",
+            "SRE",
+            "investigation algorithm",
+            "LLM integration",
+            "Python library",
+            "structured problem solving"
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "Bayesian hypothesis updating",
+            "Causal directed acyclic graph traversal",
+            "5 Ws + 5 Whys structured decomposition",
+            "Provably convergent algorithm (Doob 1949)",
+            "Four evidence tiers with formal weight assignments",
+            "LLM-assisted or fully manual operation",
+            "Provider-agnostic LLM integration (OpenAI, Anthropic, Ollama)",
+            "Zero-dependency Python engine",
+            "JSON round-trip serialization",
+            "Markdown export in standard templates"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://damionrashford.github.io/htsa/#website",
+          "url": "https://damionrashford.github.io/htsa/",
+          "name": "HTSA",
+          "description": "How to Solve Anything — probabilistic root cause analysis framework",
+          "publisher": {
+            "@type": "Person",
+            "name": "Damion Rashford"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://github.com/damionrashford/htsa/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "TechArticle",
+          "@id": "https://damionrashford.github.io/htsa/#article",
+          "headline": "HTSA: A Formal Algorithm for Root Cause Analysis",
+          "description": "Eight mathematical foundations, seven formal proofs. Bayesian updating + causal DAG traversal + 5 Ws/5 Whys. Provably convergent with bounded complexity.",
+          "url": "https://damionrashford.github.io/htsa/",
+          "author": {
+            "@type": "Person",
+            "name": "Damion Rashford"
+          },
+          "about": [
+            "Root cause analysis",
+            "Bayesian inference",
+            "Causal inference",
+            "Graph theory",
+            "Information theory"
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>

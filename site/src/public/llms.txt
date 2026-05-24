@@ -1,0 +1,65 @@
+# HTSA — How to Solve Anything
+
+> A structured, probabilistic root cause analysis framework combining the 5 Ws and 5 Whys with Bayesian updating, causal DAG traversal, and LLM integration. Domain-agnostic. Fully formal. Provably convergent.
+
+## What HTSA Is
+
+HTSA (How to Solve Anything) is an open investigation framework for finding root causes of any problem — software incidents, business failures, scientific hypotheses, personal decisions. It is not a mental model checklist; it is a formal algorithm with eight mathematical foundations and seven formal proofs.
+
+Key differentiators:
+- Probabilistic reasoning: every hypothesis node carries a prior and updates via Bayes' rule as evidence arrives
+- Causal DAG traversal: problems are represented as directed acyclic graphs; the algorithm searches along causal edges, not symptom lists
+- Provably terminates: MAX_REOPEN=3 and MAX_VERIFY=3 bounds prevent infinite loops; convergence proved via Doob's martingale theorem (1949)
+- Greedy-optimal, not globally optimal — this qualifier is explicit and formalized
+- Four evidence tiers: Tier 1 (physical/instrumental) through Tier 4 (testimonial) with formal weight assignments
+- Pruning thresholds: 5% general, ≤1% safety-critical, 10% exploratory
+
+## The Four Layers
+
+1. **Situation Map** — 5 Ws decomposition, scope boundary, evidence collection, initial probability assignment
+2. **Causal Chain** — DAG traversal, 5 Whys with Bayesian updating at each node, branch pruning
+3. **Resolution** — intervention design, counterfactual validation, multi-cause interaction handling
+4. **Verification & Learning** — outcome tracking, posterior update, knowledge capture
+
+## Python Engine
+
+The `htsa_engine` Python package (Python 3.11+, zero dependencies) implements the full algorithm:
+
+- `Investigation` class: main orchestrator
+- `LLMAdvisor`: fills judgment slots via any OpenAI-compatible provider (OpenAI, Anthropic, local Ollama)
+- Supports `to_dict()` / `from_dict()` for JSON round-tripping
+- Exports Markdown in FRAMEWORK.md template format
+
+Install: `pip install htsa-engine` (coming soon) or clone and `pip install -e engine/`
+
+## Mathematical Foundations
+
+1. Graph Theory — DAG representation of causal structures
+2. Exponential Space — why naive exhaustive search fails and why pruning is necessary
+3. Causal Inference — do-calculus, interventional vs. observational data, counterfactual tests
+4. Information Theory — every *correct* Why answer reduces entropy; guides search priority
+5. Bayesian Reasoning — prior → likelihood → posterior updating at each hypothesis node
+6. Search Algorithms — informed search over hypothesis space, heuristic priority queue
+7. Cognitive Biases — confirmation bias, anchoring, availability heuristic — enumerated and mitigated
+8. Evidence Evaluation — four-tier hierarchy, PNS (Probability of Necessity and Sufficiency)
+
+## Use Cases
+
+- SRE incident postmortems
+- Engineering root cause analysis
+- Business failure analysis
+- Scientific hypothesis testing
+- Personal decision frameworks
+- Academic philosophy of causation
+
+## Repository
+
+https://github.com/damionrashford/htsa
+
+## Primary URL
+
+https://damionrashford.github.io/htsa/
+
+## License
+
+MIT
