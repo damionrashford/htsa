@@ -22,7 +22,9 @@
   "keywords": ["root-cause-analysis", "rca", "rest-api", "http"],
   "license": "MIT",
   "dependencies": {
-    "@htsa/core": "workspace:*"
+    "@elysiajs/swagger": "^1.3.1",
+    "@htsa/core": "workspace:*",
+    "elysia": "^1.4.28"
   },
   "devDependencies": {
     "typescript": "^5.7",

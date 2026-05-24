@@ -4,6 +4,8 @@ __pycache__/
 node_modules/
 site/node_modules/
 site/dist/
-docs/
+.pytest_cache/
+engine/.venv/
+.vscode/
 packages/*/dist/
 packages/*/node_modules/

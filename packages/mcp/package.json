@@ -12,12 +12,12 @@
     }
   },
   "bin": {
-    "htsa-mcp": "./dist/mcp-server"
+    "htsa-mcp": "./dist/server"
   },
   "scripts": {
-    "build": "tsc --emitDeclarationOnly && bun build src/index.ts --outdir dist --target node && bun build src/mcp-server.ts --outfile dist/mcp-server --target bun --compile",
+    "build": "tsc --emitDeclarationOnly && bun build src/index.ts --outdir dist --target node && bun build src/server.ts --outfile dist/server --target bun --compile",
     "typecheck": "tsc --noEmit",
-    "dev": "bun src/mcp-server.ts"
+    "dev": "bun src/server.ts"
   },
   "keywords": ["root-cause-analysis", "rca", "mcp", "model-context-protocol"],
   "license": "MIT",
