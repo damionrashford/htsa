@@ -1,0 +1,23 @@
+{
+  "name": "htsa",
+  "version": "2.0.0",
+  "description": "HTSA CLI — probabilistic root cause analysis from the command line",
+  "type": "module",
+  "bin": {
+    "htsa": "./dist/htsa"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --outfile dist/htsa --target bun --compile",
+    "typecheck": "tsc --noEmit",
+    "dev": "bun src/index.ts"
+  },
+  "keywords": ["root-cause-analysis", "rca", "5-whys", "postmortem", "cli"],
+  "license": "MIT",
+  "dependencies": {
+    "@htsa/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7",
+    "@types/bun": "latest"
+  }
+}

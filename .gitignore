@@ -5,3 +5,5 @@ node_modules/
 site/node_modules/
 site/dist/
 docs/
+packages/*/dist/
+packages/*/node_modules/

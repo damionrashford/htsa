@@ -1,0 +1,33 @@
+{
+  "name": "@htsa/mcp",
+  "version": "2.0.0",
+  "description": "HTSA MCP server — Model Context Protocol integration for root cause analysis",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "htsa-mcp": "./dist/mcp-server"
+  },
+  "scripts": {
+    "build": "tsc --emitDeclarationOnly && bun build src/index.ts --outdir dist --target node && bun build src/mcp-server.ts --outfile dist/mcp-server --target bun --compile",
+    "typecheck": "tsc --noEmit",
+    "dev": "bun src/mcp-server.ts"
+  },
+  "keywords": ["root-cause-analysis", "rca", "mcp", "model-context-protocol"],
+  "license": "MIT",
+  "dependencies": {
+    "@htsa/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.7",
+    "@types/bun": "latest"
+  }
+}

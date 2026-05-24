@@ -1,0 +1,31 @@
+{
+  "name": "@htsa/server",
+  "version": "2.0.0",
+  "description": "HTSA HTTP server — REST API for probabilistic root cause analysis",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "htsa-server": "./dist/server"
+  },
+  "scripts": {
+    "build": "tsc --emitDeclarationOnly && bun build src/index.ts --outdir dist --target node && bun build src/server.ts --outfile dist/server --target bun --compile",
+    "typecheck": "tsc --noEmit",
+    "dev": "bun src/server.ts"
+  },
+  "keywords": ["root-cause-analysis", "rca", "rest-api", "http"],
+  "license": "MIT",
+  "dependencies": {
+    "@htsa/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7",
+    "@types/bun": "latest"
+  }
+}

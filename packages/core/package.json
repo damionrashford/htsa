@@ -1,0 +1,38 @@
+{
+  "name": "@htsa/core",
+  "version": "2.0.0",
+  "description": "How to Solve Anything — probabilistic root cause analysis engine. Bayesian updating + causal DAG + 5 Ws/5 Whys. Zero dependencies.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --emitDeclarationOnly && bun build src/index.ts --outdir dist --target node --minify",
+    "typecheck": "tsc --noEmit",
+    "dev": "bun src/index.ts"
+  },
+  "keywords": [
+    "root-cause-analysis",
+    "rca",
+    "bayesian",
+    "causal-inference",
+    "investigation",
+    "5-whys",
+    "postmortem",
+    "sre",
+    "incident-analysis"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/damionrashford/htsa"
+  },
+  "devDependencies": {
+    "typescript": "^5.7"
+  }
+}
