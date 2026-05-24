@@ -2,7 +2,7 @@ import tailwind from "bun-plugin-tailwind";
 import { copyFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const outdir = join(import.meta.dir, "../docs");
+const outdir = join(import.meta.dir, "dist");
 
 console.log("Building HTSA site...");
 
@@ -21,5 +21,5 @@ if (!result.success) {
 // Copy index.html to 404.html for GitHub Pages SPA routing
 await copyFile(join(outdir, "index.html"), join(outdir, "404.html"));
 
-console.log(`Built ${result.outputs.length} files to docs/`);
+console.log(`Built ${result.outputs.length} files to dist/`);
 console.log("Copied index.html → 404.html for GitHub Pages SPA routing");

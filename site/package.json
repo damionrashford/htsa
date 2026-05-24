@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun index.html",
     "build": "bun build.ts",
-    "preview": "bunx serve ../docs"
+    "preview": "bunx serve dist"
   },
   "dependencies": {
     "react": "^19.0.0",
