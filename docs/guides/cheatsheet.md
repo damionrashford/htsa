@@ -128,4 +128,4 @@ Same framework, compressed:
 
 ---
 
-**[Full Framework](FRAMEWORK.md)** · **[The Math](math/00_index.md)** · **[Proofs](proofs/00_index.md)** · **[Examples](examples/00_index.md)**
+**[Full Framework](../framework.md)** · **[The Math](../math/00_index.md)** · **[Proofs](../proofs/00_index.md)** · **[Examples](../examples/00_index.md)**

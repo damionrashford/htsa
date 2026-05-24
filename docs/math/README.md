@@ -48,4 +48,4 @@ For the full index with summaries and cross-references, see **[00_index.md](00_i
 
 ---
 
-<p align="center"><strong><a href="../FRAMEWORK.md">Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../proofs/00_index.md">Proofs</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../README.md">README</a></strong></p>
+<p align="center"><strong><a href="../framework.md">Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../proofs/00_index.md">Proofs</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../README.md">README</a></strong></p>

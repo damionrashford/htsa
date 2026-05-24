@@ -59,4 +59,4 @@ The math is sound given correct inputs. The operator, the modeling choice, and t
 
 <p align="center"><strong>Next →</strong> <strong><a href="01_formal_definitions.md">01 — Formal Definitions</a></strong></p>
 
-<p align="center"><strong><a href="../math/08_evidence_evaluation.md">← 08 Evidence Evaluation</a></strong> · <strong><a href="../math/00_index.md">The Math</a></strong> · <strong><a href="../FRAMEWORK.md">Framework</a></strong> · <strong><a href="../README.md">README</a></strong></p>
+<p align="center"><strong><a href="../math/08_evidence_evaluation.md">← 08 Evidence Evaluation</a></strong> · <strong><a href="../math/00_index.md">The Math</a></strong> · <strong><a href="../framework.md">Framework</a></strong> · <strong><a href="../README.md">README</a></strong></p>

@@ -258,4 +258,4 @@ The counterfactual test on the fix (Definition 9 in proofs/01) is exactly the in
 
 ---
 
-<p align="center"><strong>← Previous</strong> <strong><a href="09_causation_theory.md">09 — Causation Theory</a></strong> · <strong>↑ Back to Index</strong> <strong><a href="00_index.md">Math Index</a></strong> · <strong><a href="../FRAMEWORK.md">Framework</a></strong></p>
+<p align="center"><strong>← Previous</strong> <strong><a href="09_causation_theory.md">09 — Causation Theory</a></strong> · <strong>↑ Back to Index</strong> <strong><a href="00_index.md">Math Index</a></strong> · <strong><a href="../framework.md">Framework</a></strong></p>

@@ -329,4 +329,4 @@ Evidence gathered after the investigation has already developed a leading hypoth
 
 ---
 
-<p align="center"><strong>← Previous</strong> <strong><a href="07_cognitive_biases.md">07 — Cognitive Biases</a></strong> · <strong>Next →</strong> <strong><a href="../proofs/00_index.md">Formal Proofs</a></strong> · <strong>↑ Back to Framework</strong> <strong><a href="../FRAMEWORK.md">FRAMEWORK.md</a></strong></p>
+<p align="center"><strong>← Previous</strong> <strong><a href="07_cognitive_biases.md">07 — Cognitive Biases</a></strong> · <strong>Next →</strong> <strong><a href="../proofs/00_index.md">Formal Proofs</a></strong> · <strong>↑ Back to Framework</strong> <strong><a href="../framework.md">FRAMEWORK.md</a></strong></p>

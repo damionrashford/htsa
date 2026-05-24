@@ -215,4 +215,4 @@ These are conditions, not causes. They cannot be counterfactually tested ("If co
 
 ---
 
-**[Cheat Sheet](CHEATSHEET.md)** · **[Full Framework](FRAMEWORK.md)** · **[The Math](math/00_index.md)** · **[Examples](examples/00_index.md)**
+**[Cheat Sheet](cheatsheet.md)** · **[Full Framework](../framework.md)** · **[The Math](../math/00_index.md)** · **[Examples](../examples/00_index.md)**

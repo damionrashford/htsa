@@ -46,4 +46,4 @@
 
 ---
 
-<p align="center"><strong><a href="../math/00_index.md">Math</a></strong> · <strong><a href="../proofs/00_index.md">Proofs</a></strong> · <strong><a href="../FRAMEWORK.md">Framework</a></strong></p>
+<p align="center"><strong><a href="../math/00_index.md">Math</a></strong> · <strong><a href="../proofs/00_index.md">Proofs</a></strong> · <strong><a href="../framework.md">Framework</a></strong></p>

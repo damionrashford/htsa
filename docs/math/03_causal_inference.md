@@ -58,7 +58,7 @@ These are different. Observing that it's raining does not cause wet ground. Inte
 
 At every Why node, you are making a causal claim. That claim must meet a minimum standard.
 
-**The Counterfactual Test** is the framework's primary causal validation tool. It operates in two stages — Stage 1 handles standard causes, Stage 2 catches overdetermined causes that naive counterfactual testing misses. **The two-stage design is a core contribution of this framework** — without Stage 2, any investigation with multiple independently sufficient causes will incorrectly discard genuine root causes. See also **[FRAMEWORK.md](../FRAMEWORK.md)** (Root Cause Interaction section) for how overdetermined causes are handled at the resolution layer.
+**The Counterfactual Test** is the framework's primary causal validation tool. It operates in two stages — Stage 1 handles standard causes, Stage 2 catches overdetermined causes that naive counterfactual testing misses. **The two-stage design is a core contribution of this framework** — without Stage 2, any investigation with multiple independently sufficient causes will incorrectly discard genuine root causes. See also **[FRAMEWORK.md](../framework.md)** (Root Cause Interaction section) for how overdetermined causes are handled at the resolution layer.
 
 **Stage 1 — Simple counterfactual:**
 > "If this Why answer had NOT been true, would the problem still have occurred?"
@@ -125,7 +125,7 @@ This is why the framework uses a **two-stage counterfactual test** (see "How Thi
 - **Stage 1** catches standard causes (independently necessary).
 - **Stage 2** catches overdetermined causes (independently sufficient but masked).
 
-**Root cause interaction type:** Overdetermined causes are **OR-causation** — any one is sufficient. This contrasts with AND-causation (all are necessary). See **[FRAMEWORK.md](../FRAMEWORK.md)** for the full interaction table.
+**Root cause interaction type:** Overdetermined causes are **OR-causation** — any one is sufficient. This contrasts with AND-causation (all are necessary). See **[FRAMEWORK.md](../framework.md)** for the full interaction table.
 
 When overdetermined causes are found:
 1. Flag both as genuine root causes

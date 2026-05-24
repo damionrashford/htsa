@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-<strong><a href="FRAMEWORK.md">📋 Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="math/00_index.md">🧮 The Math</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="proofs/00_index.md">🔬 Proofs</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="DIAGRAMS.md">📊 Diagrams</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="engine/README.md">⚙️ Engine</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="research/00_index.md">📚 Research</a></strong>
+<strong><a href="docs/framework.md">📋 Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="docs/math/00_index.md">🧮 The Math</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="docs/proofs/00_index.md">🔬 Proofs</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="docs/diagrams.md">📊 Diagrams</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="docs/README.md">📖 Docs</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="docs/research/00_index.md">📚 Research</a></strong>
 </p>
 
 ---
@@ -211,4 +211,4 @@ print(budget.n_required, budget.is_indistinguishable)
 
 ---
 
-<p align="center"><a href="LICENSE"><em>MIT Licensed</em></a> · <a href="CONTRIBUTING.md"><em>Contributions welcome</em></a></p>
+<p align="center"><a href="LICENSE"><em>MIT Licensed</em></a> · <a href="docs/guides/contributing.md"><em>Contributions welcome</em></a></p>

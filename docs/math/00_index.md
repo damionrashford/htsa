@@ -120,7 +120,7 @@ The math explains each concept. The **[Formal Proofs](../proofs/00_index.md)** g
 
 ## Back to the Framework
 
-**[Return to FRAMEWORK.md](../FRAMEWORK.md)**
+**[Return to FRAMEWORK.md](../framework.md)**
 
 ---
 

@@ -16,7 +16,7 @@ Thanks for your interest in contributing to HTSA.
 
 ## Guidelines
 
-1. **Read the framework first.** Understand [FRAMEWORK.md](FRAMEWORK.md) and the [math index](math/00_index.md) before proposing changes.
+1. **Read the framework first.** Understand [framework.md](../framework.md) and the [math index](../math/00_index.md) before proposing changes.
 2. **One change per PR.** Keep pull requests focused on a single improvement.
 3. **Match the existing style.** Centered titles, bold links, consistent markdown formatting.
 4. **Evidence over opinion.** Proposed additions to the math sections should include sources or formal justification.

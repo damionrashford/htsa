@@ -38,4 +38,4 @@ Start at **[01 — Formal Definitions](01_formal_definitions.md)** and read sequ
 
 ---
 
-<p align="center"><strong><a href="../math/00_index.md">The Math</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../FRAMEWORK.md">Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../README.md">README</a></strong></p>
+<p align="center"><strong><a href="../math/00_index.md">The Math</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../framework.md">Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="../README.md">README</a></strong></p>
