@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg:       #080d1a;
+  --color-bg-alt:   #0f1628;
+  --color-bg-card:  #111827;
+  --color-border:   #1e2d4a;
+
+  --color-fg:       #dce4f5;
+  --color-fg-muted: #8899bb;
+  --color-fg-dim:   #4a5e82;
+
+  --color-teal:   oklch(0.72 0.20 196);
+  --color-violet: oklch(0.68 0.22 272);
+  --color-amber:  oklch(0.78 0.18 75);
+  --color-green:  oklch(0.72 0.18 155);
+  --color-red:    oklch(0.65 0.22 25);
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background-color: #080d1a;
+  color: #dce4f5;
+  font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #080d1a; }
+::-webkit-scrollbar-thumb { background: #1e2d4a; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.72 0.20 196 / 0.5); }
+
+::selection { background: oklch(0.72 0.20 196 / 0.25); color: #dce4f5; }
+
+pre, code { font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace; }
+
+pre {
+  background: #0f1628;
+  border: 1px solid #1e2d4a;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+code:not(pre code) {
+  background: #1e2d4a;
+  color: oklch(0.72 0.20 196);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+}

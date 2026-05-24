@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import hero from "../assets/images/hero.png";
 
 const teal = "oklch(0.72 0.20 196)";
 const violet = "oklch(0.68 0.22 272)";
@@ -73,12 +74,12 @@ const mathConcepts = [
 ];
 
 const domains = [
-  { icon: "⚙️", domain: "SRE / Engineering", who: "System / Team", what: "Outage, incident", when: "Incident timeline", where: "Service / Component" },
-  { icon: "🏥", domain: "Medicine", who: "Patient", what: "Diagnosis", when: "Onset", where: "Body system" },
-  { icon: "🔒", domain: "Security", who: "Threat actor", what: "Breach", when: "Attack window", where: "Vulnerability" },
-  { icon: "📈", domain: "Business", who: "Team / Process", what: "Bottleneck", when: "Quarter", where: "Department" },
-  { icon: "⚖️", domain: "Legal", who: "Defendant", what: "Act", when: "Date", where: "Jurisdiction" },
-  { icon: "🧠", domain: "Personal", who: "You", what: "Decision", when: "Moment", where: "Context" },
+  { icon: "⚙️", domain: "SRE / Engineering", what: "Outage, incident" },
+  { icon: "🏥", domain: "Medicine", what: "Diagnosis" },
+  { icon: "🔒", domain: "Security", what: "Breach" },
+  { icon: "📈", domain: "Business", what: "Bottleneck" },
+  { icon: "⚖️", domain: "Legal", what: "Act" },
+  { icon: "🧠", domain: "Personal", what: "Decision" },
 ];
 
 export default function Home() {
@@ -86,15 +87,12 @@ export default function Home() {
     <div>
       {/* ── Hero ── */}
       <div className="relative overflow-hidden" style={{ borderBottom: `1px solid ${border}` }}>
-        {/* Hero image bg */}
         <div className="absolute inset-0 pointer-events-none"
-          style={{ backgroundImage: "url(./hero.png)", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.18 }} />
-        {/* Overlay fade to solid bg */}
+          style={{ backgroundImage: `url(${hero})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.18 }} />
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "linear-gradient(to bottom, #080d1a00 0%, #080d1a 100%)" }} />
-        {/* Grid bg */}
-        <div className="absolute inset-0 bg-grid opacity-40 pointer-events-none" />
-        {/* Glow orbs */}
+        <div className="absolute inset-0 opacity-40 pointer-events-none"
+          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, oklch(0.72 0.20 196 / 0.07) 1px, transparent 0)", backgroundSize: "32px 32px" }} />
         <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full pointer-events-none"
           style={{ background: `radial-gradient(circle, ${teal}18 0%, transparent 70%)`, filter: "blur(40px)" }} />
         <div className="absolute top-1/2 right-1/4 w-80 h-80 rounded-full pointer-events-none"
@@ -103,7 +101,7 @@ export default function Home() {
         <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-28 text-center">
           <Tag>Root Cause Analysis · v2.0.0</Tag>
 
-          <h1 className="mt-8 text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight leading-[1.05]"
+          <h1 className="mt-8 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             <span style={{ color: "#dce4f5" }}>How to Solve</span>{" "}
             <span style={{
@@ -124,7 +122,7 @@ export default function Home() {
 
           <div className="mt-10 flex flex-wrap gap-4 justify-center">
             <Link to="/algorithm"
-              className="px-6 py-3 rounded-lg font-medium text-sm transition-all no-underline"
+              className="px-6 py-3 rounded-lg font-medium text-sm no-underline"
               style={{ backgroundColor: teal, color: "#080d1a" }}
               onMouseEnter={e => { (e.target as HTMLElement).style.opacity = "0.85"; }}
               onMouseLeave={e => { (e.target as HTMLElement).style.opacity = "1"; }}
@@ -132,8 +130,8 @@ export default function Home() {
               Learn the Algorithm →
             </Link>
             <Link to="/engine"
-              className="px-6 py-3 rounded-lg font-medium text-sm border transition-all no-underline"
-              style={{ borderColor: border, color: "#dce4f5", backgroundColor: "transparent" }}
+              className="px-6 py-3 rounded-lg font-medium text-sm border no-underline"
+              style={{ borderColor: border, color: "#dce4f5" }}
               onMouseEnter={e => { (e.target as HTMLElement).style.borderColor = `${teal}60`; }}
               onMouseLeave={e => { (e.target as HTMLElement).style.borderColor = border; }}
             >
@@ -141,7 +139,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Quick-start snippet */}
           <div className="mt-14 max-w-2xl mx-auto text-left">
             <div className="rounded-xl overflow-hidden border" style={{ borderColor: border }}>
               <div className="flex items-center gap-2 px-4 py-2.5 border-b" style={{ backgroundColor: "#0f1628", borderColor: border }}>
@@ -174,7 +171,7 @@ inv.save("postmortem.json")`}</pre>
       {/* ── The Algorithm tagline ── */}
       <Section className="pt-24 pb-4 text-center">
         <p className="text-xs font-mono uppercase tracking-widest" style={{ color: fgDim }}>The Core Insight</p>
-        <h2 className="mt-4 text-3xl sm:text-4xl font-display font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
+        <h2 className="mt-4 text-3xl sm:text-4xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
           Every problem has the same anatomy.
         </h2>
         <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: fgMuted }}>
@@ -197,7 +194,7 @@ inv.save("postmortem.json")`}</pre>
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-xs font-mono" style={{ color: layer.color }}>Layer {layer.num}</span>
-                  <h3 className="mt-1 text-xl font-display font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
+                  <h3 className="mt-1 text-xl font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
                     {layer.name}
                   </h3>
                   <span className="text-sm" style={{ color: fgMuted }}>{layer.subtitle}</span>
@@ -216,7 +213,7 @@ inv.save("postmortem.json")`}</pre>
           ))}
         </div>
         <div className="mt-8 text-center">
-          <Link to="/algorithm" className="text-sm no-underline transition-colors" style={{ color: teal }}
+          <Link to="/algorithm" className="text-sm no-underline" style={{ color: teal }}
             onMouseEnter={e => { (e.target as HTMLElement).style.opacity = "0.7"; }}
             onMouseLeave={e => { (e.target as HTMLElement).style.opacity = "1"; }}>
             Full algorithm walkthrough →
@@ -229,7 +226,7 @@ inv.save("postmortem.json")`}</pre>
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
             <p className="text-xs font-mono uppercase tracking-widest" style={{ color: fgDim }}>Domain-agnostic</p>
-            <h2 className="mt-3 text-3xl font-display font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
+            <h2 className="mt-3 text-3xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
               Works everywhere
             </h2>
             <p className="mt-3 text-base" style={{ color: fgMuted }}>Same algorithm. Same math. Different vocabulary.</p>
@@ -251,7 +248,7 @@ inv.save("postmortem.json")`}</pre>
       <Section className="pt-24 pb-24">
         <div className="text-center mb-12">
           <p className="text-xs font-mono uppercase tracking-widest" style={{ color: fgDim }}>10 Mathematical Foundations</p>
-          <h2 className="mt-3 text-3xl font-display font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
+          <h2 className="mt-3 text-3xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
             The math is always running.
           </h2>
           <p className="mt-3 text-base max-w-xl mx-auto" style={{ color: fgMuted }}>
@@ -287,7 +284,7 @@ inv.save("postmortem.json")`}</pre>
               style={{ background: `radial-gradient(ellipse at 50% 0%, ${teal}10 0%, transparent 60%)` }} />
             <div className="relative">
               <Tag>Python · v2.0.0 · Zero dependencies</Tag>
-              <h2 className="mt-6 text-3xl sm:text-4xl font-display font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
+              <h2 className="mt-6 text-3xl sm:text-4xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#dce4f5" }}>
                 The algorithm, codified.
               </h2>
               <p className="mt-4 text-base max-w-xl mx-auto" style={{ color: fgMuted }}>
@@ -295,13 +292,13 @@ inv.save("postmortem.json")`}</pre>
               </p>
               <div className="mt-8 flex flex-wrap gap-4 justify-center">
                 <Link to="/engine"
-                  className="px-6 py-3 rounded-lg font-medium text-sm transition-all no-underline"
+                  className="px-6 py-3 rounded-lg font-medium text-sm no-underline"
                   style={{ backgroundColor: teal, color: "#080d1a" }}>
                   Engine docs →
                 </Link>
                 <a href="https://github.com/damionrashford/htsa/tree/main/engine"
                   target="_blank" rel="noreferrer"
-                  className="px-6 py-3 rounded-lg font-medium text-sm border transition-all no-underline"
+                  className="px-6 py-3 rounded-lg font-medium text-sm border no-underline"
                   style={{ borderColor: border, color: "#dce4f5" }}>
                   View source ↗
                 </a>
