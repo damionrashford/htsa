@@ -1,0 +1,89 @@
+# @htsa/server
+
+HTTP server for the [HTSA](../../FRAMEWORK.md) investigation algorithm. Drive a full root cause analysis via REST.
+
+## Run
+
+```sh
+bun run dev          # http://localhost:3000
+PORT=8080 bun run dev
+```
+
+Swagger UI at `http://localhost:3000/swagger` (auto-generated from route definitions).
+
+## Install as a package
+
+```sh
+bun add @htsa/server
+```
+
+```ts
+import { route } from "@htsa/server";
+
+Bun.serve({ port: 3000, fetch: route });
+```
+
+## API
+
+All sessions are in-memory. Each investigation gets a short random ID.
+
+### Investigations
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/investigations` | Create an investigation |
+| `GET` | `/investigations` | List all |
+| `GET` | `/investigations/:id` | Full JSON dump |
+| `GET` | `/investigations/:id/report` | Markdown report |
+
+```sh
+curl -X POST http://localhost:3000/investigations \
+  -H "Content-Type: application/json" \
+  -d '{ "title": "API 500s since 02:47", "mode": "full" }'
+# → { "id": "abc123", "title": "..." }
+```
+
+### Layer 1 — Situation Map
+
+```sh
+curl -X PATCH http://localhost:3000/investigations/abc123/situation \
+  -H "Content-Type: application/json" \
+  -d '{ "whoAffected": "EU customers", "what": "500 on /checkout", "where": "EU-WEST-1" }'
+```
+
+### Layer 2 — Causal Chain
+
+```sh
+# Start the Why tree
+curl -X POST http://localhost:3000/investigations/abc123/causal-chain \
+  -d '{ "surfaceWhy": "Payment service timing out" }'
+
+# Add hypotheses
+curl -X POST http://localhost:3000/investigations/abc123/hypotheses \
+  -d '{ "parentId": "<node-id>", "statement": "DB connection pool exhausted" }'
+
+# Add evidence (triggers Bayesian update)
+curl -X POST http://localhost:3000/investigations/abc123/evidence \
+  -d '{ "nodeId": "<id>", "source": "splunk", "tier": 1, "direction": "supports", "description": "Pool at 100% before first 500" }'
+
+# Mark root cause
+curl -X POST http://localhost:3000/investigations/abc123/root-cause \
+  -d '{ "nodeId": "<id>", "depthCriteria": { "actionability": true, "counterfactualClarity": true, "systemBoundary": true, "diminishingReturns": true } }'
+```
+
+### Layer 3 — Resolution
+
+```sh
+curl -X POST http://localhost:3000/investigations/abc123/resolutions \
+  -d '{ "nodeId": "<id>", "type": "fix", "change": "Increase pool size to 100", "owner": "platform", "deadline": "2025-05-25", "priorityImpact": 5, "priorityRecurrence": 4, "priorityActionability": 5 }'
+```
+
+### Bias check
+
+```sh
+curl http://localhost:3000/investigations/abc123/bias-check
+```
+
+## License
+
+MIT
