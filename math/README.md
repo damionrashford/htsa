@@ -1,10 +1,10 @@
 <h1 align="center">Mathematical Foundations</h1>
 
-<p align="center"><strong>Eight concepts that make the framework work.</strong><br>Each one answers a specific question about how investigations behave.</p>
+<p align="center"><strong>Ten concepts that make the framework work.</strong><br>Each one answers a specific question about how root cause analysis and investigation behave.</p>
 
 ---
 
-## The Eight Foundations
+## The Ten Foundations
 
 | # | Concept | What It Answers |
 |:---:|---|---|
@@ -16,14 +16,18 @@
 | **[06](06_search_algorithms.md)** | **Search Algorithms** | How do you move through the Why tree? |
 | **[07](07_cognitive_biases.md)** | **Cognitive Biases** | What corrupts the investigation? |
 | **[08](08_evidence_evaluation.md)** | **Evidence Evaluation** | How do you know which evidence to trust? |
+| **[09](09_causation_theory.md)** | **Causation Theory** | How do you classify and quantify actual causes? |
+| **[10](10_intervention_theory.md)** | **Intervention Theory** | How do you find the minimal set of fixes? |
 
 ---
 
 ## How They Stack
 
-The eight concepts layer on top of each other. Graph Theory provides the foundation; Evidence Evaluation sits at the top.
+The ten concepts layer on top of each other. Graph Theory is the foundation; Intervention Theory sits at the top.
 
 ```
+Intervention Theory    How you find the minimal fix set
+Causation Theory       How you classify and quantify actual causes
 Evidence Evaluation    What counts as proof
 Cognitive Biases       What corrupts the mind
 Search Algorithms      How you move

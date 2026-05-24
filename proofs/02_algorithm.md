@@ -128,6 +128,9 @@ Each step maps to a specific mathematical foundation:
 | 8 | Bayesian update | 2 | **[05 Bayesian Reasoning](../math/05_bayesian_reasoning.md)** — posterior computation |
 | 9 | Prune low-probability | 2 | **[04 Information Theory](../math/04_information_theory.md)** — entropy reduction |
 | 10 | Depth criteria | 2 | **[03 Causal Inference](../math/03_causal_inference.md)** — root cause identification |
+| 10 | HP2015 + NESS | 2 | **[09 Causation Theory](../math/09_causation_theory.md)** — three-stage counterfactual |
+| 10 | PNS + causal grade | 2 | **[09 Causation Theory](../math/09_causation_theory.md)** — root cause prioritization |
+| 12 | Minimal intervention | 3 | **[10 Intervention Theory](../math/10_intervention_theory.md)** — coverage ≥ θ |
 | 12 | Resolve root causes | 3 | **[03 Causal Inference](../math/03_causal_inference.md)** — counterfactual test on fix |
 | 13 | Verify and update priors | 4 | **[05 Bayesian Reasoning](../math/05_bayesian_reasoning.md)** — prior update for next investigation |
 | All | Bias resistance | All | **[07 Cognitive Biases](../math/07_cognitive_biases.md)** — operator discipline |
@@ -187,22 +190,36 @@ The goal is not exhaustive enumeration (impossible), but structured coverage acr
 
 ### COUNTERFACTUAL_TEST(c, e)
 
+Three-stage stack (math/09_causation_theory.md):
+
 ```
 COUNTERFACTUAL_TEST(c, e):
-  // Stage 1 — Simple counterfactual
+  ── Stage 1 — Simple necessity (Lewis 1973) ──
   Ask: "If c had NOT been true, would the problem still have occurred?"
   IF no   → RETURN true     // c is a genuine causal factor
 
-  // Stage 2 — Contingent counterfactual (overdetermination check)
-  // Triggered only when Stage 1 returns yes
-  FOR EACH other active cause c′ in the Why tree (c′ ≠ c):
-    Ask: "If c had NOT been true AND c′ had ALSO not been true,
-          would the problem still have occurred?"
-    IF no → FLAG(c, c′) as overdetermined (OR-causation)
-            RETURN true   // c IS a genuine cause, masked by c′
-  // All combinations still return yes
-  RETURN false             // c is genuinely not a cause
+  ── Stage 2 — HP2015 Modified Definition (Halpern & Pearl 2015) ──
+  // Handles preemption, trumping, and asymmetric overdetermination.
+  // Triggered when Stage 1 returns yes (c is not simply necessary).
+
+  W ← all variables NOT on any causal path from c to the outcome
+  // W is the "context" held fixed at its actual values
+
+  Ask: "If c had NOT occurred, WITH W held fixed at actual values,
+        would the outcome still have occurred?"
+  IF no  → c passes AC2 → RETURN true    // c is an actual cause
+  IF yes → c fails HP2015 → RETURN false  // not a cause even in context
+
+  ── Stage 3 — NESS Test (Beckers 2021) ──
+  // Confirms causal minimality: c is needed, not just present.
+  // Applied to candidates that pass Stage 2.
+
+  Find smallest set S containing c such that S → outcome
+  IF S \ {c} is insufficient → c is NECESSARY within S → RETURN true (root cause)
+  IF S \ {c} is sufficient   → c is REPLACEABLE → RETURN "contributing factor"
 ```
+
+The three-stage stack catches different failure modes. Stage 1 is sufficient for simple chains. Stages 2–3 are invoked when overdetermination or preemption is suspected. Implementation: `causation/counterfactual.py` — `CounterfactualTester.test_full_stack()`.
 
 ### BAYESIAN_UPDATE(P, e)
 
@@ -225,6 +242,36 @@ DEPTH_CRITERIA(c):
   RETURN (a) ∧ (b) ∧ (c) ∧ ¬(d)
 ```
 
+### MINIMAL_INTERVENTION(R, θ_intervention)
+
+Finds the smallest subset S ⊆ R whose joint fixing achieves the prevention probability threshold (math/10_intervention_theory.md):
+
+```
+MINIMAL_INTERVENTION(R, θ_intervention):
+  // θ_intervention default: 0.90 (90% prevention probability)
+
+  For each rᵢ ∈ R:
+    Compute PNS(rᵢ)         // probability of necessity and sufficiency
+    Compute causal_grade(rᵢ) = PNS(rᵢ) × (1 - normality(rᵢ))
+
+  For k = 1, 2, ..., |R|:
+    For each subset S of size k:
+      coverage(S) = 1 - ∏ᵢ∈S_effective (1 - effective_pns(i))
+      // AND-group {A, B}: both must be in S, contributes PNS(A)×PNS(B)
+      // OR-node {A}:      A alone contributes PNS(A)
+
+      IF coverage(S) ≥ θ_intervention:
+        RETURN S as minimal intervention set
+
+  // No subset achieves threshold
+  RETURN R (full set) with warning: "Even full remediation may be insufficient —
+  verify that root causes were correctly identified"
+
+Sort S by causal_grade descending → assign to RESOLVE in that priority order
+```
+
+Implementation: `causation/intervention.py` — `MinimalInterventionCalculator.find_minimal_set()`.
+
 ### RESOLVE(r)
 
 ```
@@ -239,6 +286,8 @@ RESOLVE(r):
     IF no  → fix is correctly targeted → proceed
   Assign owner and deadline
   Compute priority: Impact(r) × Recurrence(r) × Actionability(r)
+  // Note: causal_grade (PNS × normality) supersedes priority score
+  //   when MINIMAL_INTERVENTION has been run. Fix highest-grade causes first.
 ```
 
 ### VERIFY(r)

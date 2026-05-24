@@ -26,14 +26,21 @@ The **[eight mathematical foundations](../math/00_index.md)** explain the concep
 
 ## What the Proofs Assume
 
-The proofs hold under these assumptions:
+The proof system rests on five assumptions. Assumptions A1–A3 were implicit in v1. A4 and A5 are made explicit in v2 because violating them weakens specific guarantees.
 
-1. The problem has causal structure that can be modeled as a directed acyclic graph
-2. The investigator correctly generates child nodes (asks valid Why questions)
-3. Evidence is truthful (not fabricated or systematically misleading)
-4. The prior assigns nonzero probability to the true root cause
+**A1 — Finite Graph:** |V| is finite. Without this, the termination proof fails.
 
-These are modeling assumptions, not theorems. If any assumption is violated, the corresponding guarantee weakens.
+**A2 — Acyclicity:** G is a DAG — no directed cycles. Without this, the search can loop indefinitely. (Feedback loops are handled by the Feedback Loop Protocol in the framework, not by relaxing A2.)
+
+**A3 — Positive Prior:** P₀(v) > 0 for every generated candidate node. If P₀(v) = 0, Bayes' theorem cannot recover v regardless of evidence (see Proof 06, zero-prior danger). Assign a minimum prior ε = 1/(|V| × b) where b is the branching factor, rather than zero.
+
+**A4 — Faithfulness:** G is faithful to the underlying causal structure. Every conditional independence observed in the investigation graph corresponds to a missing causal edge. Violation: if two causal paths from a root cause to the outcome have coefficients of opposite sign, the paths cancel — the cause appears independent of the outcome and may be pruned. Mitigation: lower θ_prune; actively seek evidence that would disprove the leading hypothesis.
+
+**A5 — Causal Sufficiency:** V contains all common causes of variables in V. No hidden confounder links two variables in the graph without being represented as a node. Violation: observed correlations are attributed to the wrong cause, producing miscalibrated Bayesian updates. Mitigation: explicitly generate confounder candidates during EXPAND; apply the Temporal Firewall Protocol for social and organizational investigations.
+
+When A4 or A5 may be violated: (1) lower θ_prune toward 0.01, (2) explicitly seek evidence that would disprove the leading hypothesis, (3) label conclusions as provisional pending confounder exclusion.
+
+These are modeling assumptions, not theorems. If any assumption is violated, the corresponding guarantee weakens as noted above.
 
 ---
 

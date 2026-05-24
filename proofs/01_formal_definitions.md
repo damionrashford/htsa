@@ -47,7 +47,7 @@ An edge is valid if and only if it passes the **counterfactual test**:
 
 If removing cause u does not change the probability of the effect, the edge is spurious and should be removed.
 
-**Overdetermination note:** When multiple causes are each independently sufficient (OR-causation), the simple counterfactual P(effect | do(¬u)) may equal P(effect | do(u)) because another sufficient cause remains. In this case, apply the **contingent counterfactual**: test P(effect | do(¬u) ∧ do(¬u′)) for each other candidate cause u′. If any combination changes the probability, the edge is valid — u is a genuine cause masked by u′. See the two-stage COUNTERFACTUAL_TEST in **[02_algorithm.md](02_algorithm.md)**.
+**Overdetermination note:** When multiple causes are each independently sufficient (OR-causation), the simple counterfactual P(effect | do(¬u)) may equal P(effect | do(u)) because another sufficient cause remains. In this case, apply the three-stage COUNTERFACTUAL_TEST in **[02_algorithm.md](02_algorithm.md)**: Stage 1 (Lewis necessity), Stage 2 (HP2015 W-partition — construct W as variables not on any path from u to effect, block W, test if do(¬u) changes outcome), Stage 3 (NESS — verify u is a necessary element of a minimal sufficient set). A4 (Faithfulness) is required for the counterfactual test to correctly identify causal edges.
 
 ---
 
@@ -197,6 +197,42 @@ Un-pruning is rare but important. It prevents the framework from permanently dis
 
 ---
 
+## Definition 11 — Time Index
+
+A time index τ(v) assigns a temporal position to each node v, enabling causal ordering and preemption detection:
+
+```
+τ(v) = {
+  timestamp_iso:           ISO 8601 timestamp if exact time is known
+  relative_to_incident:    e.g., "T-2h", "T+15m" relative to incident onset
+  ordering_index:          integer i where τ(vᵢ) < τ(vⱼ) means vᵢ preceded vⱼ
+}
+```
+
+Time indices are optional — many investigations (organizational, behavioral) lack precise timestamps. When present, they enable temporal preemption analysis: if two causes C₁ and C₂ are both structurally sufficient for E, the earlier cause (lower ordering_index) is the preempting cause and takes priority in the causal attribution.
+
+**Causal ordering constraint:** If τ(v) > τ(u) and (u, v) ∈ E (v is listed as a cause of u), the edge is temporally reversed and should be flagged. Causes must precede their effects.
+
+---
+
+## Assumptions
+
+The proof system rests on five assumptions. A1–A3 were present implicitly in the original formulation. A4–A5 are stated explicitly because their violation degrades specific proof guarantees.
+
+**A1 — Finite Graph:** |V| is finite. Without this, the termination proof fails.
+
+**A2 — Acyclicity:** G is a DAG. Feedback loops are handled by the Feedback Loop Protocol in the framework, not by relaxing A2.
+
+**A3 — Positive Prior:** P₀(v) > 0 for every generated candidate. Assign minimum ε = 1/(|V| × b) rather than zero.
+
+**A4 — Faithfulness:** G faithfully represents the causal structure — every observed conditional independence corresponds to a missing causal edge. Violation: canceling causal paths produce artificial independence, causing genuine root causes to appear unrelated to the outcome and be pruned. Mitigation: lower θ_prune; actively seek disconfirming evidence.
+
+**A5 — Causal Sufficiency:** V contains all common causes of variables in V. Hidden confounders corrupt Bayesian updates by attributing correlation to the wrong node. Mitigation: generate confounder candidates explicitly during EXPAND; apply the Temporal Firewall Protocol for social and organizational investigations.
+
+See **[00_index.md](00_index.md)** for the full assumption table and failure modes.
+
+---
+
 ## Summary
 
 | Object | Symbol | What It Represents |
@@ -211,6 +247,7 @@ Un-pruning is rare but important. It prevents the framework from permanently dis
 | Entropy | H(G) | Uncertainty remaining in the investigation |
 | Resolution | res(r) = (type, change, owner, deadline, priority) | The action taken for each root cause |
 | Pruning threshold | θ | Minimum probability to continue exploring |
+| Time index | τ(v) | Temporal ordering for preemption analysis (optional) |
 
 ---
 

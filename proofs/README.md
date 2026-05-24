@@ -1,6 +1,6 @@
 <h1 align="center">Formal Proofs</h1>
 
-<p align="center"><strong>Seven proofs that the framework has specific guarantees.</strong><br>The math explains the concepts. The proofs show they hold.</p>
+<p align="center"><strong>Seven formal proofs that the root cause analysis algorithm has specific guarantees.</strong><br>The math explains the concepts. The proofs show they hold — termination, completeness, optimality, convergence.</p>
 
 ---
 
@@ -20,12 +20,13 @@
 
 ## Assumptions
 
-The proofs hold under four assumptions:
+The proofs hold under five assumptions (A1–A5). A1–A3 were implicit in the original formulation. A4 (Faithfulness) and A5 (Causal Sufficiency) are stated explicitly because their violation degrades specific guarantees in causal edge identification and Bayesian convergence.
 
-1. The problem has causal structure that can be modeled as a directed acyclic graph
-2. The investigator correctly generates child nodes (asks valid Why questions)
-3. Evidence is truthful (not fabricated or systematically misleading)
-4. The prior assigns nonzero probability to the true root cause
+1. **A1 — Finite Graph**: The problem has causal structure that can be modeled as a finite directed acyclic graph
+2. **A2 — Acyclicity**: The investigation graph is acyclic (feedback loops handled via the Feedback Loop Protocol)
+3. **A3 — Positive Prior**: The investigator correctly generates child nodes with nonzero prior probability on the true root cause
+4. **A4 — Faithfulness**: The graph faithfully represents causal structure — conditional independence corresponds to missing edges
+5. **A5 — Causal Sufficiency**: The graph contains all common causes of variables; no hidden confounders
 
 If any assumption is violated, the corresponding guarantee weakens. See **[00_index.md](00_index.md)** for the full discussion of assumptions and limitations.
 

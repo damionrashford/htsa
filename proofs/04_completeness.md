@@ -96,6 +96,41 @@ The pruning threshold is a **precision-recall tradeoff**. Lower θ means more co
 
 ---
 
+## Additional Caveat — Faithfulness (Assumption A4)
+
+The completeness proof also requires **A4 (Faithfulness)**: G is faithful to the underlying causal structure. Faithfulness can be violated when:
+
+```
+Violation 1 — Canceling paths:
+  Two causal paths from root cause r to the outcome have
+  coefficients of opposite sign. The paths cancel — r appears
+  statistically independent of the outcome even though it is a cause.
+  Bayesian updates cannot raise P(r | evidence) above θ_prune.
+  r is pruned despite being genuine.
+
+Violation 2 — Measurement noise:
+  Instrument error creates artificial independence between a cause
+  and its observable effects. Tier 1 evidence appears non-diagnostic.
+
+Violation 3 — Near-cancellation:
+  Paths don't cancel exactly but are close enough that evidence
+  is too weak to raise P(r) above threshold before the budget runs out.
+```
+
+When faithfulness cannot be assumed:
+
+```
+Option 1: θ_prune = 0 — unconditional completeness (no pruning)
+Option 2: Lower θ_prune toward 0.01 and explicitly seek
+          counter-evidence (evidence that would DISPROVE r if false)
+Option 3: Label conclusions as provisional — subject to revision
+          if stronger experimental evidence becomes available
+```
+
+The completeness guarantee is **unconditional over the graph G under A1–A5**. It is **conditional on A4** in the presence of potential path cancellation. This is not a failure of the algorithm — it is a fundamental limit of observational investigation: a cause that leaves no observable trace cannot be confirmed by any observational method.
+
+---
+
 ## Corollary
 
 **If θ_prune = 0, HTSA is unconditionally complete** — it will find every root cause in the graph, regardless of probability.

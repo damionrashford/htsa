@@ -2,6 +2,8 @@
 Probability engine — Bayesian updating, entropy tracking, and pruning.
 
 Implements Definitions 6-8, 10 from the formal spec.
+Extended with second-order uncertainty (Beta conjugate prior) and
+evidence budget integration.
 """
 
 from __future__ import annotations
@@ -16,6 +18,8 @@ from ..core import (
     Node,
     NodeStatus,
 )
+from ..core.models_causation import SecondOrderUncertainty
+from .budget import EvidenceBudget, EvidenceBudgetCalculator
 
 
 @dataclass
@@ -235,6 +239,87 @@ class ProbabilityEngine:
             return
         for n in active:
             n.probability = n.probability / total
+
+    # -- Second-order uncertainty (Beta conjugate prior) --
+
+    def second_order_update(
+        self,
+        graph: InvestigationGraph,
+        node_id: str,
+        supports: bool,
+    ) -> SecondOrderUncertainty:
+        """
+        Update the node's Beta distribution with one new observation.
+
+        If the node has no uncertainty object yet, initialize with alpha=beta=1
+        (uninformative prior). Returns the updated SecondOrderUncertainty.
+
+        Modifies node.uncertainty in-place.
+        """
+        node = graph.get_node(node_id)
+        unc = node.uncertainty
+        if unc is None:
+            unc = SecondOrderUncertainty(node_id=node_id)
+            node.uncertainty = unc
+        unc.update(supports)
+        return unc
+
+    def check_and_prune_with_uncertainty(
+        self,
+        graph: InvestigationGraph,
+        node_id: str,
+        reason: str = "",
+    ) -> bool:
+        """
+        Conservative pruning: prune only when P_upper < pruning_threshold.
+
+        When second-order uncertainty is tracked, use the upper bound of the
+        95% credible interval rather than the point estimate. This prevents
+        premature pruning when evidence is sparse.
+
+        Falls back to standard check_and_prune if no uncertainty is set.
+        """
+        node = graph.get_node(node_id)
+        if node.uncertainty is None:
+            return self.check_and_prune(graph, node_id, reason)
+
+        p_upper = node.uncertainty.p_upper()
+        if p_upper < self.pruning_threshold:
+            node.pruned_probability = node.probability
+            node.status = NodeStatus.PRUNED
+            self.pruning_log.append(
+                PruningRecord(
+                    node_id=node_id,
+                    probability_at_pruning=node.probability,
+                    reason=reason or (
+                        f"P_upper={p_upper:.4f} < threshold={self.pruning_threshold} "
+                        f"(second-order uncertainty: alpha={node.uncertainty.alpha:.1f}, "
+                        f"beta={node.uncertainty.beta:.1f})"
+                    ),
+                    evidence_ids=[e.id for e in node.evidence],
+                )
+            )
+            self._renormalize_siblings(graph, node_id)
+            return True
+        return False
+
+    def evidence_budget(
+        self,
+        current_posterior: float,
+        alternative_posteriors: dict[str, float],
+        confidence_target: float = 0.05,
+    ) -> EvidenceBudget:
+        """
+        Compute minimum evidence count to distinguish this node from alternatives.
+
+        Wrapper around EvidenceBudgetCalculator for use within investigation flow.
+        """
+        calc = EvidenceBudgetCalculator(
+            target_posterior=current_posterior,
+            alternative_posteriors=alternative_posteriors,
+            confidence_target=confidence_target,
+        )
+        return calc.compute()
 
     def _estimate_likelihoods(
         self, evidence: Evidence

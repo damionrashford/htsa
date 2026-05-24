@@ -1,12 +1,14 @@
 # HTSA Engine
 
-The [How to Solve Anything](../FRAMEWORK.md) framework, codified as a Python library.
+A Python library for structured **root cause analysis (RCA)** — the [How to Solve Anything](../FRAMEWORK.md) algorithm, codified.
 
 ## What this is
 
-A graph-based investigation engine that implements the HTSA algorithm from [proofs/02_algorithm.md](../proofs/02_algorithm.md). Two layers work together:
+A graph-based incident investigation engine implementing the HTSA algorithm ([proofs/02_algorithm.md](../proofs/02_algorithm.md)). Use it for engineering postmortems, incident analysis, 5 Whys investigations, or any problem with decomposable causal structure.
 
-- **Deterministic layer** (the engine) — graph structure, Bayesian math, entropy tracking, pruning, bias detection, constraint enforcement.
+Two layers work together:
+
+- **Deterministic layer** (the engine) — DAG traversal, Bayesian probability, entropy tracking, pruning, bias detection, causal counterfactual tests (HP2015 + NESS), PNS scoring, minimal intervention set.
 - **Judgment layer** (you or an LLM) — generating hypotheses, interpreting evidence, evaluating depth criteria, proposing resolutions.
 
 The engine enforces the rules. You (or the LLM) make the calls.
@@ -41,7 +43,8 @@ htsa_engine/
 
 ```bash
 cd engine
-pip install -e .
+uv sync          # recommended — zero-dep, installs htsa-engine in editable mode
+# or: pip install -e .
 ```
 
 ## Quick start — with an LLM (easiest)

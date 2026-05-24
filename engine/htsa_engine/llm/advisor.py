@@ -40,6 +40,19 @@ from .prompts import (
 )
 
 
+# Operations the LLM pipeline must never trigger directly.
+# These require explicit human confirmation or bypass safety constraints.
+# If an LLM response tries to call one of these (e.g. via prompt injection),
+# the guard raises immediately rather than executing.
+_RESTRICTED_OPERATIONS: frozenset[str] = frozenset({
+    "restore_pruned",         # un-pruning: requires human review of new evidence
+    "remove_node",            # graph mutation: irreversible, human-only
+    "force_close_investigation",  # bypasses depth criteria checks
+    "set_probability_direct", # setting P=0/1 without evidence bypasses Bayes
+    "override_bias_alert",    # silencing the BiasGuard
+})
+
+
 class LLMAdvisor:
     """
     Provider-agnostic LLM advisor for HTSA investigations.
@@ -66,6 +79,20 @@ class LLMAdvisor:
         print(inv.root_causes)
         inv.save("investigation.json")
     """
+
+    @staticmethod
+    def _guard(operation: str) -> None:
+        """
+        Raise if operation is in _RESTRICTED_OPERATIONS.
+
+        Call at the top of any method that the auto-run pipeline could
+        potentially reach through an LLM-generated instruction.
+        """
+        if operation in _RESTRICTED_OPERATIONS:
+            raise PermissionError(
+                f"LLM pipeline cannot call restricted operation '{operation}'. "
+                "This operation requires explicit human authorization."
+            )
 
     def __init__(
         self,

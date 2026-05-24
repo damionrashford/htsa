@@ -130,6 +130,60 @@ This limitation does not invalidate the convergence guarantee — it bounds its 
 
 ---
 
+## Evidence Budget Formula
+
+The convergence rate implies a minimum evidence count for achieving ε-confident conclusions. This is the **principled stopping criterion** for an investigation — use it instead of intuition to decide when enough evidence has been gathered.
+
+**Derivation:**
+
+To achieve P(r* | E) ≥ (1-ε) while P(rⱼ | E) ≤ ε for all j ≠ *:
+
+```
+P(rⱼ | E) ≈ P(rⱼ) × exp(-n × KL(r* ‖ rⱼ))
+
+Setting P(rⱼ | E) = ε and solving for n:
+
+  n_required ≥ log((1-ε)/ε) / min_j KL(r* ‖ rⱼ)
+```
+
+The bound is driven by the **hardest-to-distinguish alternative** — the one with minimum KL divergence from the true cause.
+
+**Worked example:**
+
+```
+Investigation state:
+  3 hypotheses: r* (true), r₁, r₂
+  KL(r* ‖ r₁) = 0.50 nats   ← r₁ easily distinguished by Tier 1 logs
+  KL(r* ‖ r₂) = 0.05 nats   ← r₂ hard to distinguish (similar evidence pattern)
+  Target confidence: ε = 0.05  (95% confidence)
+
+n_required ≥ log(19) / 0.05 ≈ 2.944 / 0.05 ≈ 59
+
+Interpretation:
+  At least 59 independent pieces of evidence are needed before
+  the posterior is reliable enough to close at 95% confidence,
+  driven by the difficulty of distinguishing r₂.
+
+  If r₂ can be eliminated on prior grounds (process of elimination,
+  physical impossibility), the effective minimum KL rises to 0.50,
+  and n_required drops to ~6.
+```
+
+**How to apply during an investigation:**
+
+After each Bayesian update, compute:
+
+```
+Budget remaining = ceil(log((1-ε)/ε) / min_j KL(leading ‖ alternative_j)) - n_gathered
+```
+
+If budget remaining ≤ 0: the posterior has sufficiently separated — close the investigation.
+If budget remaining > 0: continue gathering evidence, prioritizing discriminating sources.
+
+The engine exposes this calculation via `ProbabilityEngine.evidence_budget(confidence_target)`.
+
+---
+
 ## Required Conditions
 
 The convergence guarantee requires:

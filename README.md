@@ -1,25 +1,35 @@
 <h1 align="center">How to Solve Anything</h1>
 
-<p align="center"><strong>A universal investigation framework combining the 5 Ws and 5 Whys.</strong><br>Applicable to any problem with decomposable causal structure — across disciplines, domains, and scales.</p>
+<p align="center"><strong>A structured root cause analysis (RCA) framework combining the 5 Ws and 5 Whys.</strong><br>Probabilistic, formally proven, and domain-agnostic — engineering incidents, medicine, security, business, legal.</p>
 
 <p align="center">
 <code>SOMETHING HAPPENED → TO SOMEONE → SOMEWHERE → AT SOME POINT → FOR SOME REASON</code>
 </p>
 
 <p align="center">
-<strong><a href="FRAMEWORK.md">📋 Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="math/00_index.md">🧮 The Math</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="proofs/00_index.md">🔬 Proofs</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="DIAGRAMS.md">📊 Diagrams</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="engine/README.md">⚙️ Engine</a></strong>
+<em>Not a template. An algorithm.</em><br>
+<em>Bayesian probability at every node. Causal inference at every edge. LLM-assisted or fully manual.</em>
+</p>
+
+<p align="center">
+<strong><a href="FRAMEWORK.md">📋 Framework</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="math/00_index.md">🧮 The Math</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="proofs/00_index.md">🔬 Proofs</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="DIAGRAMS.md">📊 Diagrams</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="engine/README.md">⚙️ Engine</a></strong>&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;<strong><a href="research/00_index.md">📚 Research</a></strong>
 </p>
 
 ---
 
 <h3 align="center">💡 The Core Insight</h3>
 
-<p align="center">Every problem in every field has the same anatomy.<br>The vocabulary changes. The structure never does.</p>
+<p align="center">Every incident, outage, failure, or decision has the same anatomy.<br>The vocabulary changes. The causal structure never does.</p>
 
 <p align="center">
 The <strong>5 Ws</strong> tell you <em>what happened.</em><br>
 The <strong>5 Whys</strong> tell you <em>why it happened.</em><br>
-Together they tell you <em>what to do about it.</em>
+Together they tell you <em>what to fix — and in what order.</em>
+</p>
+
+<p align="center">
+HTSA replaces the blank postmortem doc and the sticky-note 5 Whys session<br>
+with a formal algorithm: DAG traversal + Bayesian updating + causal counterfactual tests.
 </p>
 
 ---
@@ -77,14 +87,16 @@ Why (surface)
 
 | Domain | Who | What | When | Where | Why |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 🏥 Medicine | Patient | Symptom | Onset | Body system | Presenting complaint |
+| ⚙️ SRE / Engineering | System / Team | Outage, incident | Incident timeline | Service / Component | Alert or error |
+| 🏥 Medicine | Patient | Diagnosis | Onset | Body system | Presenting symptom |
 | 🔒 Security | Threat actor | Breach | Attack window | Vulnerability | Attack vector |
-| ⚙️ Engineering | System | Failure | Timeline | Component | Error message |
 | 📈 Business | Team / Process | Bottleneck | Quarter | Department | Stated reason |
 | ⚖️ Legal | Defendant | Act | Date | Jurisdiction | Motive |
 | 🧠 Personal | You | Decision | Moment | Context | Emotion |
 
 </div>
+
+<p align="center"><em>Each domain uses the same algorithm. The math is domain-agnostic.</em></p>
 
 ---
 
@@ -104,6 +116,8 @@ Why (surface)
 | **[06](math/06_search_algorithms.md)** | Search Algorithms | How do you move through the Why tree? |
 | **[07](math/07_cognitive_biases.md)** | Cognitive Biases | What corrupts the investigation? |
 | **[08](math/08_evidence_evaluation.md)** | Evidence Evaluation | How do you know which evidence to trust? |
+| **[09](math/09_causation_theory.md)** | Causation Theory | How do you classify and quantify actual causes? |
+| **[10](math/10_intervention_theory.md)** | Intervention Theory | How do you find the minimal set of fixes? |
 
 </div>
 
@@ -112,19 +126,20 @@ Why (surface)
 <h3 align="center">📏 Rules</h3>
 
 <p align="center"><strong>Map before you drill.</strong> Complete the 5 Ws before starting the 5 Whys.</p>
-<p align="center"><strong>Evidence at every node.</strong> An assertion without evidence is a guess.</p>
-<p align="center"><strong>Branch when reality branches.</strong> If a Why has multiple answers, follow all of them.</p>
+<p align="center"><strong>Evidence at every node.</strong> An assertion without evidence is a guess — tier your evidence.</p>
+<p align="center"><strong>Branch when reality branches.</strong> Real incidents have multiple root causes. Follow all of them.</p>
 <p align="center"><strong>5 is a heuristic, not a rule.</strong> Stop when you reach something you can actually change.</p>
-<p align="center"><strong>The framework is recursive.</strong> A root cause can become a new "What." Run it again if needed.</p>
+<p align="center"><strong>The counterfactual test closes the loop.</strong> If the fix had existed, would the incident still have happened? If yes, go deeper.</p>
+<p align="center"><strong>The framework is recursive.</strong> A root cause can become a new incident. Run it again.</p>
 
 ---
 
 <h3 align="center">⚙️ Engine</h3>
 
-<p align="center">The framework is also available as a <strong>Python library</strong> with built-in LLM integration.<br>Works with any provider — OpenAI, Anthropic, Groq, Mistral, Ollama, or any OpenAI-compatible endpoint.</p>
+<p align="center">The framework is also available as a <strong>Python library</strong> (v2.0.0) with built-in LLM integration.<br>Works with any provider — OpenAI, Anthropic, Groq, Mistral, Ollama, or any OpenAI-compatible endpoint.</p>
 
 ```bash
-cd engine && pip install -e .
+cd engine && uv run python -c "from htsa_engine import Investigation; print('ready')"
 ```
 
 **Auto-investigate with any LLM** — one call, all 4 layers:
@@ -153,7 +168,46 @@ branch = inv.add_hypothesis(origin, "Memory leak", probability=0.6)
 inv.save("investigation.json")
 ```
 
+**v2 — Causation analysis** — quantify and prioritize root causes:
+
+```python
+# HP2015 + NESS three-stage counterfactual test
+result = inv.run_hp2015_test(branch, origin)
+print(result.is_root_cause, result.w_partition)
+
+# Probability of Necessity and Sufficiency
+pns = inv.compute_pns(branch, pn=0.8, ps=0.7)
+print(pns.causation_type)  # "single_root_cause" | "and_node" | "or_node"
+
+# Find the smallest set of fixes that achieves 90% coverage
+intervention = inv.compute_minimal_intervention_set(theta=0.90)
+print(intervention.minimal_set, intervention.coverage)
+
+# Evidence budget — how many Tier-1 evidence items are needed?
+budget = inv.evidence_budget(branch, alternative_posteriors={"other_node": 0.3})
+print(budget.n_required, budget.is_indistinguishable)
+```
+
 <p align="center"><strong><a href="engine/README.md">Full engine documentation →</a></strong></p>
+
+---
+
+---
+
+<h3 align="center">🔍 How HTSA Differs</h3>
+
+<div align="center">
+
+| | HTSA | PyRCA / BARO | DoWhy | Postmortem templates |
+|:---:|:---:|:---:|:---:|:---:|
+| **Approach** | Structured algorithm | ML / metrics | Statistical | Blank form |
+| **Input** | Any problem | Prometheus metrics | Data frames | Text |
+| **Causal proof** | HP2015 + NESS + PNS | Correlation-based | do-calculus | None |
+| **Works without data** | Yes | No | No | Yes |
+| **Cross-domain** | Yes | AIOps only | Research only | Yes |
+| **LLM integration** | Built-in | No | No | No |
+
+</div>
 
 ---
 

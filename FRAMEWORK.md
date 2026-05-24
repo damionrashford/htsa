@@ -365,6 +365,52 @@ An investigation without a defined verification window is not closed — it is a
 
 ---
 
+## Escalation — When Root Causes Point to a Control Problem
+
+HTSA finds root causes within a causal chain. Some investigations produce root causes that are not isolated failures — they reveal that the system's **control structure** is inadequate. When this pattern appears, the investigation should escalate to STAMP/STPA analysis (Systems Theoretic Accident Model and Processes, Leveson 2004).
+
+**Escalation triggers — check all root causes in R:**
+
+```
+Pattern 1 — Control action failures:
+  Root causes are management decisions, supervisor approvals, or
+  operator overrides of system constraints.
+  Signal: fixing the specific decision doesn't prevent the same
+          class of decision from occurring in the future.
+
+Pattern 2 — Feedback loop failures:
+  Root causes involve inadequate monitoring, delayed signals, or
+  measurement gaps that left a problem invisible until it was too late.
+  Signal: the system could not detect its own unsafe state.
+
+Pattern 3 — Constraint enforcement failures:
+  Root causes involve a system operating in a state that a safety
+  constraint was designed to prevent, but the constraint was bypassed,
+  degraded, or never enforced in this context.
+  Signal: the constraint existed on paper but not in practice.
+```
+
+When any pattern is present:
+- Apply HTSA normally — find and resolve the specific root causes in R
+- Additionally: the root causes are **symptoms** of an inadequate control structure
+- Escalate to STPA to redesign the control loop, not just patch the instance
+
+**HTSA and STAMP are complementary — not competing:**
+
+```
+HTSA = post-incident investigation
+  → What went wrong this time?
+  → Which specific causes can be fixed?
+
+STPA = pre-incident structural analysis
+  → What could go wrong given this control structure?
+  → Which constraint gaps make this class of failure possible?
+```
+
+Running HTSA after an incident and STPA after HTSA is the complete response: fix the instance (HTSA) and close the structural gap (STPA).
+
+---
+
 ## Rules of the Framework
 
 1. **Map before you drill.** Complete the 5 Ws before starting the 5 Whys.

@@ -6,14 +6,44 @@
 
 ## Theorem
 
-**Every Why question that produces a non-trivial partition of the hypothesis space strictly reduces the entropy of the investigation.**
+**Every Why question that produces a non-trivial partition of the hypothesis space strictly reduces the entropy of the investigation (observational bound).**
+
+---
+
+## Entropy Type Qualification
+
+The entropy used in this proof is **observational (Shannon) entropy** H(X|Y) — the standard conditional entropy from information theory.
+
+The theoretically correct quantity for causal investigation is **interventional (causal) entropy** H_do(X)(Y) — the entropy of Y under the intervention do(X=x), not under passive observation X=x.
+
+```
+Key inequality (Simoes, Janzing, Schölkopf 2024):
+
+  H_do(X)(Y) ≤ H(Y|X)
+
+  Interventional information gain ≤ Observational information gain
+  Equality holds if and only if X and Y share no common causes (confounders).
+```
+
+**Consequence for this proof:** The theorem below holds as stated for observational information gain. For causal information gain — which is the quantity that matters for investigation — the theorem provides an **upper bound**. In investigations with potential confounders, asking a question may reduce observational entropy without reducing causal entropy by the same amount.
+
+**When the bound is tight (causal = observational):**
+- The investigation uses Tier 1 experimental evidence (controlled interventions, A/B tests)
+- No confounder exists between the question variable and the hypotheses
+- The investigation is conducted in a system where all common causes are observable
+
+**When the bound is loose (causal < observational):**
+- The investigation relies on observational evidence with potential confounders
+- Two causes correlate because of a common ancestor, not because one causes the other
+
+In practice: when gathering Tier 1 experimental evidence, treat IG as exact. For Tier 2-4 observational evidence, treat IG as optimistic — the actual causal information gained is bounded above by what the Shannon calculation shows.
 
 ---
 
 ## Setup
 
 Given:
-- H_before = entropy of the investigation before asking a Why question
+- H_before = observational entropy of the investigation before asking a Why question
 - The question partitions the current hypothesis set into k ≥ 2 non-empty groups
 - At least two groups have different probability distributions
 
@@ -130,6 +160,28 @@ Counterfactual test: "If this cause were false, would the problem still have occ
 ```
 
 A counterfactual test that produces a clear yes/no answer always has positive information gain. An ambiguous answer has near-zero information gain — which is why the framework demands clarity at every node.
+
+---
+
+## Corollary 2 — Causal Entropy Bound
+
+**For any Why question Q about variable X affecting root cause Y:**
+
+```
+IG_causal(Q) ≤ IG_observational(Q)
+
+with equality when no variable Z is a common cause of both X and Y
+in the investigation graph.
+```
+
+*Proof:* Follows directly from Simoes et al. (2024) Theorem 1: the interventional mutual information I_do(X)(Y) ≤ I(X;Y) for all distributions, with equality iff X and Y are d-separated from all confounders.
+
+**Practical meaning:** The Shannon information gain calculated in this proof is the maximum causal information gain achievable. To approach the maximum:
+1. Gather Tier 1 experimental evidence (interventions, not observations)
+2. Explicitly generate and test confounder hypotheses during EXPAND
+3. Apply the Temporal Firewall Protocol for social/organizational investigations where the investigation announcement itself creates confounders
+
+A question with high observational IG and high confounder risk may deliver less causal clarity than a question with lower observational IG and strong experimental evidence. Collect the best-tier evidence available before drawing conclusions from the IG calculation. ∎
 
 ---
 

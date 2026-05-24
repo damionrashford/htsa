@@ -1,11 +1,11 @@
 """
-Investigation orchestrator — the main entry point.
+Investigation orchestrator — the main entry point for an HTSA session.
 
-Ties together the graph, probability engine, search strategy, evidence store,
-bias guard, feedback loop handler, resolution engine, and verification tracker
-into a single coherent investigation session.
-
-This implements the HTSA algorithm from proofs/02_algorithm.md.
+Implements the HTSA algorithm from proofs/02_algorithm.md.
+Layer 1 (Situation Map) lives in situation_map.py.
+Layer 4 (Verification & Learning) lives in learning_loop.py.
+This file owns Layer 2 (Causal Chain), Layer 3 (Resolution),
+state queries, serialization, and the event log.
 """
 
 from __future__ import annotations
@@ -21,6 +21,7 @@ from .analysis import (
     BiasGuard,
     BiasType,
     EvidenceStore,
+    EvidenceBudget,
     FeedbackLoop,
     FeedbackLoopHandler,
     ProbabilityEngine,
@@ -28,6 +29,23 @@ from .analysis import (
     SearchType,
     TemporalFirewall,
     create_search,
+)
+from .causation import (
+    ANDGroup,
+    CounterfactualResult,
+    CounterfactualTester,
+    InterventionResult,
+    MinimalInterventionCalculator,
+    NormalityScorer,
+    PNSCalculator,
+    PrioritizedRootCause,
+    prioritize_root_causes,
+)
+from .core import (
+    NormalityScore,
+    PNSScore,
+    SecondOrderUncertainty,
+    TimeIndex,
 )
 from .core import (
     DepthCriteria,
@@ -40,11 +58,13 @@ from .core import (
     ResolutionType,
     SituationMap,
 )
+from .learning_loop import LearningLoopMixin
 from .resolution import (
     ResolutionEngine,
     VerificationTracker,
     VerificationWindowType,
 )
+from .situation_map import SituationMapMixin
 
 
 class InvestigationMode(Enum):
@@ -62,34 +82,25 @@ class InvestigationConfig:
     search_type: SearchType = SearchType.BEST_FIRST
 
 
-class Investigation:
+class Investigation(SituationMapMixin, LearningLoopMixin):
     """
     The main investigation session.
 
-    Usage:
-        inv = Investigation(title="Service outage", pruning_threshold=0.05)
+    Layers:
+      1 — Situation Map  → set_situation(), complete_situation()  [situation_map.py]
+      2 — Causal Chain   → start_causal_chain(), add_hypothesis(), add_evidence(), ...
+      3 — Resolution     → resolve(), test_fix_counterfactual(), get_priority_order()
+      4 — Verification   → add_verification(), verify(), record_learning()  [learning_loop.py]
 
-        # Layer 1 — Situation Map
+    Quick start:
+        inv = Investigation(title="Service outage")
         inv.set_situation(what="API returning 500s", why_surface="Server errors")
-
-        # Layer 2 — Causal Chain
         origin = inv.start_causal_chain("Server errors under load")
-        branch_a = inv.add_hypothesis(origin, "Memory leak", probability=0.4)
-        inv.add_evidence(branch_a, Evidence(...))
-        inv.update_probability(branch_a, likelihood=0.9, likelihood_complement=0.2)
-
-        # ... continue until root causes found
-        inv.mark_root_cause(branch_a, depth_criteria=DepthCriteria(...))
-
-        # Layer 3 — Resolution
-        inv.resolve(branch_a, ResolutionType.FIX, "Fix memory leak in handler")
-
-        # Layer 4 — Verification
-        inv.add_verification(branch_a, VerificationWindowType.EVENT_DRIVEN, ...)
-
-        # Serialize
-        data = inv.to_dict()
-        inv2 = Investigation.from_dict(data)
+        h = inv.add_hypothesis(origin, "Memory leak", probability=0.4)
+        inv.add_evidence(h, Evidence(...))
+        inv.mark_root_cause(h, DepthCriteria(...))
+        inv.resolve(h, ResolutionType.FIX, "Fix memory leak in handler")
+        inv.add_verification(h, VerificationWindowType.EVENT_DRIVEN, ...)
     """
 
     def __init__(
@@ -110,14 +121,13 @@ class Investigation:
             search_type=search_type,
         )
 
-        # Rapid mode overrides (FRAMEWORK.md Time-Pressure Mode)
+        # Rapid mode overrides — FRAMEWORK.md Time-Pressure Mode
         if mode == InvestigationMode.RAPID:
             pruning_threshold = max(pruning_threshold, 0.20)
             search_type = SearchType.DFS
             self.config.pruning_threshold = pruning_threshold
             self.config.search_type = search_type
 
-        # Core modules
         self.graph = InvestigationGraph()
         self.probability = ProbabilityEngine(pruning_threshold=pruning_threshold)
         self.search: SearchStrategy = create_search(search_type)
@@ -126,50 +136,21 @@ class Investigation:
         self.resolution_engine = ResolutionEngine()
         self.verification = VerificationTracker()
 
-        # Evidence store with optional temporal firewall
         firewall = None
         if temporal_firewall_start:
             firewall = TemporalFirewall(investigation_start=temporal_firewall_start)
         self.evidence_store = EvidenceStore(firewall=firewall)
 
-        # Layer 1
         self.situation = SituationMap()
         self._situation_complete = False
-
-        # Event log
         self._events: list[dict] = []
-
-    # -----------------------------------------------------------------------
-    # Layer 1 — Situation Map
-    # -----------------------------------------------------------------------
-
-    def set_situation(self, **kwargs: str) -> SituationMap:
-        """Set situation map fields. Valid keys match SituationMap fields."""
-        for key, value in kwargs.items():
-            if hasattr(self.situation, key):
-                setattr(self.situation, key, value)
-        self._situation_complete = self.situation.is_complete
-        self._log("situation_updated", {"fields": list(kwargs.keys())})
-        return self.situation
-
-    def complete_situation(self) -> list[BiasAlert]:
-        """
-        Mark the situation map as complete and check for anchoring bias.
-        Returns any bias alerts.
-        """
-        self._situation_complete = True
-        self._log("situation_complete", {})
-        return self.bias_guard.check_anchoring(self.graph)
 
     # -----------------------------------------------------------------------
     # Layer 2 — Causal Chain
     # -----------------------------------------------------------------------
 
     def start_causal_chain(self, surface_why: str) -> str:
-        """
-        Create the origin node from the surface Why.
-        Returns the origin node ID.
-        """
+        """Create the origin node from the surface Why. Returns the origin node ID."""
         if not self._situation_complete:
             alerts = self.bias_guard.check_anchoring(self.graph)
             if alerts:
@@ -188,10 +169,7 @@ class Investigation:
         statement: str,
         probability: float | None = None,
     ) -> str:
-        """
-        Add a child hypothesis to a node in the Why tree.
-        Returns the new node ID.
-        """
+        """Add a child hypothesis to the Why tree. Returns the new node ID."""
         node = Node(statement=statement)
         node_id = self.graph.add_node(node, parent_id=parent_id)
 
@@ -223,10 +201,7 @@ class Investigation:
         likelihood: float | None = None,
         likelihood_complement: float | None = None,
     ) -> float:
-        """
-        Add evidence to a node and update its probability.
-        Returns the new posterior.
-        """
+        """Add evidence to a node and update its probability. Returns the new posterior."""
         posterior = self.probability.update_from_evidence(
             self.graph, node_id, evidence,
             likelihood=likelihood,
@@ -253,18 +228,10 @@ class Investigation:
             self.graph, node_id, evidence, likelihood, likelihood_complement
         )
 
-    def discard_hypothesis(
-        self,
-        node_id: str,
-        reason: str = "",
-    ) -> None:
+    def discard_hypothesis(self, node_id: str, reason: str = "") -> None:
         """
-        Discard a hypothesis that fails the edge counterfactual test
-        (proofs/02 step 7). The node is marked DISCARDED and removed
-        from the search frontier.
-
-        Use this when removing cause c would NOT change the outcome —
-        meaning c is not a genuine causal factor.
+        Discard a hypothesis that fails the counterfactual test.
+        Removing this cause would NOT change the outcome — it is not a genuine causal factor.
         """
         node = self.graph.get_node(node_id)
         node.status = NodeStatus.DISCARDED
@@ -274,21 +241,11 @@ class Investigation:
             "reason": reason or "failed edge counterfactual test",
         })
 
-    def flag_overdetermination(
-        self,
-        node_a_id: str,
-        node_b_id: str,
-    ) -> None:
+    def flag_overdetermination(self, node_a_id: str, node_b_id: str) -> None:
         """
-        Flag two nodes as overdetermined (OR-causation) per the two-stage
-        COUNTERFACTUAL_TEST in proofs/02.
-
-        Stage 1: Removing cause A alone doesn't change outcome (because B
-                 is independently sufficient).
-        Stage 2: Removing BOTH A and B does change outcome — so A IS a
-                 genuine cause, masked by B.
-
-        Both are genuine causes. Both must be resolved.
+        Flag two nodes as overdetermined OR-causes (proofs/02 Stage 2).
+        Both are genuine causes; each is independently sufficient.
+        Both must be resolved.
         """
         self.resolution_engine.add_interaction(
             node_a_id, node_b_id,
@@ -312,7 +269,7 @@ class Investigation:
         return pruned
 
     def restore_pruned(self, node_id: str, new_probability: float) -> None:
-        """Un-prune a node if new evidence raises its probability."""
+        """Un-prune a node when new evidence raises its probability above threshold."""
         self.probability.restore_pruned(self.graph, node_id, new_probability)
         self.search.add(self.graph.get_node(node_id))
         self._log("node_restored", {
@@ -321,75 +278,63 @@ class Investigation:
         })
 
     def next_to_explore(self) -> Node | None:
-        """Get the next node to explore from the search frontier."""
+        """Return the next node to explore from the search frontier."""
         return self.search.next()
 
     def switch_search_strategy(self, strategy: SearchType) -> None:
         """Switch search strategy mid-investigation (e.g., Best-First → BFS)."""
         old_type = self.search.strategy_type
         self.search = create_search(strategy)
-        # Re-add all active frontier nodes
         for node in self.graph.frontier_nodes():
             self.search.add(node)
-        self._log("search_switched", {
-            "from": old_type.value,
-            "to": strategy.value,
-        })
+        self._log("search_switched", {"from": old_type.value, "to": strategy.value})
 
-    def mark_root_cause(
-        self, node_id: str, depth_criteria: DepthCriteria
-    ) -> list[BiasAlert]:
+    def mark_root_cause(self, node_id: str, depth_criteria: DepthCriteria) -> list[BiasAlert]:
         """
         Mark a node as a confirmed root cause.
 
-        Enforces Definition 4 from the formal spec:
-          (a) children(v) = empty   — node must be a leaf
+        Enforces Definition 4 from proofs/01_formal_definitions.md:
+          (a) children(v) = empty   — must be a leaf node
           (b) Ev(v) != empty        — evidence must exist
           (c-f) depth criteria      — all four tests must pass
 
-        Returns any bias alerts (premature closure if criteria don't pass).
+        Returns bias alerts if criteria aren't met (blocks premature closure).
         """
         node = self.graph.get_node(node_id)
         node.depth_criteria = depth_criteria
 
-        # Definition 4(a): must be a leaf node
         if not self.graph.is_leaf(node_id):
             self._log("root_cause_rejected", {
-                "node_id": node_id,
-                "reason": "not a leaf node — has unexplored children",
+                "node_id": node_id, "reason": "not a leaf node"
             })
             return [BiasAlert(
                 bias_type=BiasType.PREMATURE_CLOSURE,
                 level=AlertLevel.BLOCK,
                 message=(
                     f"Node '{node.statement}' cannot be a root cause — it has children. "
-                    f"A root cause must be a leaf node (Definition 4a)."
+                    "A root cause must be a leaf node (Definition 4a)."
                 ),
                 node_id=node_id,
             )]
 
-        # Definition 4(b): evidence must exist
         if not node.evidence:
             self._log("root_cause_rejected", {
-                "node_id": node_id,
-                "reason": "no evidence exists for this claim",
+                "node_id": node_id, "reason": "no evidence"
             })
             return [BiasAlert(
                 bias_type=BiasType.PREMATURE_CLOSURE,
                 level=AlertLevel.BLOCK,
                 message=(
                     f"Node '{node.statement}' cannot be a root cause — it has no evidence. "
-                    f"An assertion without evidence is a guess (Definition 4b)."
+                    "An assertion without evidence is a guess (Definition 4b)."
                 ),
                 node_id=node_id,
             )]
 
-        # Definition 4(c-f): all four depth criteria must pass
         if not depth_criteria.all_passed:
             alerts = self.bias_guard.check_premature_closure(self.graph)
             self._log("root_cause_rejected", {
-                "node_id": node_id,
-                "reason": "depth criteria not all passed",
+                "node_id": node_id, "reason": "depth criteria not all passed"
             })
             return alerts
 
@@ -403,10 +348,9 @@ class Investigation:
         return []
 
     def check_biases(self) -> list[BiasAlert]:
-        """Run all bias checks against current investigation state."""
+        """Run all bias checks against the current investigation state."""
         return self.bias_guard.check_all(
-            self.graph,
-            situation_complete=self._situation_complete,
+            self.graph, situation_complete=self._situation_complete,
         )
 
     # -----------------------------------------------------------------------
@@ -418,12 +362,155 @@ class Investigation:
         cycle_nodes: list[str],
         cycle_descriptions: list[str],
     ) -> FeedbackLoop:
-        """Register a detected feedback loop."""
+        """Register a detected feedback loop in the causal graph."""
         loop = self.loop_handler.register_loop(cycle_nodes, cycle_descriptions)
-        self._log("feedback_loop_registered", {
-            "cycle_nodes": cycle_nodes,
-        })
+        self._log("feedback_loop_registered", {"cycle_nodes": cycle_nodes})
         return loop
+
+    # -----------------------------------------------------------------------
+    # Causation analysis (math/09, math/10)
+    # -----------------------------------------------------------------------
+
+    def run_hp2015_test(
+        self,
+        candidate_id: str,
+        outcome_id: str,
+    ) -> CounterfactualResult:
+        """
+        Run the three-stage counterfactual stack (HP2015 + NESS).
+
+        Stores results on the candidate node (hp2015_result, hp2015_w_partition,
+        ness_minimal_set). Returns the full CounterfactualResult.
+        """
+        tester = CounterfactualTester(self.graph)
+        result = tester.test_full_stack(candidate_id, outcome_id)
+
+        node = self.graph.get_node(candidate_id)
+        node.hp2015_result = result.is_root_cause
+        node.hp2015_w_partition = result.w_partition
+        node.ness_minimal_set = result.ness_sufficient_set
+
+        self._log("hp2015_test_run", {
+            "candidate_id": candidate_id,
+            "outcome_id": outcome_id,
+            "is_root_cause": result.is_root_cause,
+            "stage1": result.stage1_passes,
+            "stage2": result.stage2_passes,
+            "stage3": result.stage3_ness_passes,
+        })
+        return result
+
+    def compute_pns(
+        self,
+        node_id: str,
+        pn: float,
+        ps: float,
+        monotonicity_assumed: bool = True,
+    ) -> PNSScore:
+        """
+        Compute PNS from investigator-provided PN and PS estimates.
+
+        Stores result on node.pns_score. For experimental/observational data,
+        use PNSCalculator directly and pass the result to this method.
+        """
+        score = PNSCalculator(node_id).from_subjective(
+            pn=pn, ps=ps, monotonicity_assumed=monotonicity_assumed
+        )
+        self.graph.get_node(node_id).pns_score = score
+        self._log("pns_computed", {
+            "node_id": node_id, "pn": pn, "ps": ps,
+            "pns": score.pns, "type": score.causation_type,
+        })
+        return score
+
+    def compute_normality_score(
+        self,
+        node_id: str,
+        normality: float,
+        reasoning: str = "",
+    ) -> NormalityScore:
+        """
+        Set a normality score (from investigator judgment) on a node.
+
+        Also computes causal_grade if node.pns_score is already set.
+        """
+        scorer = NormalityScorer()
+        norm_score = scorer.from_subjective(node_id, normality, reasoning)
+
+        node = self.graph.get_node(node_id)
+        node.normality_score = norm_score
+
+        if node.pns_score is not None:
+            scorer.compute_grade(norm_score, node.pns_score)
+
+        self._log("normality_scored", {
+            "node_id": node_id, "normality": normality,
+            "causal_grade": norm_score.causal_grade,
+        })
+        return norm_score
+
+    def compute_minimal_intervention_set(
+        self,
+        theta: float = 0.90,
+        and_groups: list[ANDGroup] | None = None,
+    ) -> InterventionResult:
+        """
+        Find the minimal subset of root causes whose fixing achieves coverage >= theta.
+
+        Updates Resolution.minimal_intervention and Resolution.intervention_coverage
+        on the nodes in the minimal set.
+        """
+        root_cause_nodes = self.graph.root_causes()
+        pns_scores: list[PNSScore] = []
+
+        for node in root_cause_nodes:
+            if node.pns_score is not None:
+                pns_scores.append(node.pns_score)
+            else:
+                # Default: treat as contributing factor (PNS=0.3) if no score set
+                default = PNSCalculator(node.id).from_subjective(pn=0.5, ps=0.5)
+                pns_scores.append(default)
+
+        calc = MinimalInterventionCalculator(
+            root_causes=pns_scores,
+            and_groups=and_groups,
+            theta=theta,
+        )
+        result = calc.find_minimal_set()
+
+        # Tag the minimal set nodes
+        minimal_set = set(result.minimal_set)
+        for node in root_cause_nodes:
+            if node.resolution is not None:
+                node.resolution.minimal_intervention = node.id in minimal_set
+                node.resolution.intervention_coverage = (
+                    calc.coverage([node.id]) if node.id in minimal_set else 0.0
+                )
+
+        self._log("minimal_intervention_computed", {
+            "minimal_set": result.minimal_set,
+            "coverage": result.coverage,
+            "threshold": theta,
+            "achieved": result.threshold_achieved,
+        })
+        return result
+
+    def evidence_budget(
+        self,
+        node_id: str,
+        alternative_posteriors: dict[str, float],
+        confidence_target: float = 0.05,
+    ) -> EvidenceBudget:
+        """
+        Compute how many independent Tier-1 evidence pieces are needed to
+        discriminate this node from its alternatives.
+        """
+        node = self.graph.get_node(node_id)
+        return self.probability.evidence_budget(
+            current_posterior=node.probability,
+            alternative_posteriors=alternative_posteriors,
+            confidence_target=confidence_target,
+        )
 
     # -----------------------------------------------------------------------
     # Layer 3 — Resolution
@@ -440,7 +527,7 @@ class Investigation:
         recurrence: int = 0,
         actionability: int = 0,
     ) -> Resolution:
-        """Assign a resolution to a root cause."""
+        """Assign a resolution to a confirmed root cause."""
         resolution = self.resolution_engine.resolve(
             self.graph, node_id, resolution_type, change,
             owner=owner, deadline=deadline,
@@ -455,14 +542,13 @@ class Investigation:
         return resolution
 
     def test_fix_counterfactual(self, node_id: str, passes: bool) -> str | None:
-        """Run the counterfactual test on a proposed fix."""
-        result = self.resolution_engine.check_counterfactual(
-            self.graph, node_id, passes
-        )
+        """
+        Run the counterfactual test on a proposed fix.
+        'If this fix had existed, would the problem still have occurred?'
+        """
+        result = self.resolution_engine.check_counterfactual(self.graph, node_id, passes)
         self._log("counterfactual_tested", {
-            "node_id": node_id,
-            "passes": passes,
-            "result": result,
+            "node_id": node_id, "passes": passes, "result": result,
         })
         return result
 
@@ -473,97 +559,14 @@ class Investigation:
         interaction_type: InteractionType,
         description: str,
     ) -> None:
-        """Document an interaction between two root causes."""
+        """Document a causal interaction (AND, OR, amplification, conflict) between two root causes."""
         self.resolution_engine.add_interaction(
             cause_a_id, cause_b_id, interaction_type, description
         )
 
     def get_priority_order(self) -> list[tuple[Node, int]]:
-        """Get root causes sorted by priority score."""
+        """Return root causes sorted by priority score (impact × recurrence × actionability)."""
         return self.resolution_engine.prioritize(self.graph)
-
-    # -----------------------------------------------------------------------
-    # Layer 4 — Verification & Learning
-    # -----------------------------------------------------------------------
-
-    def add_verification(
-        self,
-        node_id: str,
-        window_type: VerificationWindowType,
-        window_description: str,
-        metric: str,
-        expected_date: str = "",
-    ) -> None:
-        self.verification.add_verification(
-            node_id, window_type, window_description, metric, expected_date
-        )
-        self._log("verification_added", {
-            "node_id": node_id,
-            "window_type": window_type.value,
-        })
-
-    def verify(self, node_id: str, recurred: bool) -> str | None:
-        result = self.verification.verify(self.graph, node_id, recurred)
-        self._log("verification_result", {
-            "node_id": node_id,
-            "recurred": recurred,
-            "result": result,
-        })
-        return result
-
-    def record_learning(self, **kwargs) -> None:
-        self.verification.record_learning(**kwargs)
-
-    @property
-    def is_closed(self) -> bool:
-        return self.verification.is_investigation_closed()
-
-    # -----------------------------------------------------------------------
-    # Sub-investigations (recursive property)
-    # -----------------------------------------------------------------------
-
-    def spawn_sub_investigation(
-        self,
-        root_cause_id: str,
-        title: str = "",
-    ) -> "Investigation":
-        """
-        The framework is recursive: a root cause can become a new 'What'.
-
-        Spawns a child investigation from a confirmed root cause node.
-        The root cause's statement becomes the new investigation's 'what',
-        and the parent investigation's context carries over.
-
-        Returns a new Investigation instance linked to this one.
-        """
-        node = self.graph.get_node(root_cause_id)
-        if node.status != NodeStatus.ROOT_CAUSE:
-            raise ValueError(
-                f"Node {root_cause_id} is not a confirmed root cause — "
-                f"cannot spawn sub-investigation from status '{node.status.value}'"
-            )
-
-        sub_title = title or f"Sub-investigation: {node.statement}"
-        sub = Investigation(
-            title=sub_title,
-            pruning_threshold=self.config.pruning_threshold,
-            mode=self.config.mode,
-            search_type=self.config.search_type,
-            investigator=self.config.investigator,
-        )
-
-        # The root cause becomes the new 'what'
-        sub.set_situation(
-            what=node.statement,
-            why_surface=f"Deeper investigation of: {node.statement}",
-        )
-
-        self._log("sub_investigation_spawned", {
-            "parent_root_cause_id": root_cause_id,
-            "sub_investigation_title": sub_title,
-        })
-
-        return sub
 
     # -----------------------------------------------------------------------
     # State queries
@@ -594,7 +597,7 @@ class Investigation:
         return list(self._events)
 
     # -----------------------------------------------------------------------
-    # Serialization (delegated to serialization.py)
+    # Serialization
     # -----------------------------------------------------------------------
 
     def to_dict(self) -> dict:
@@ -603,7 +606,7 @@ class Investigation:
         return investigation_to_dict(self)
 
     def to_markdown(self) -> str:
-        """Export the investigation as a markdown document matching FRAMEWORK.md templates."""
+        """Export as a markdown document matching FRAMEWORK.md templates."""
         from .export import to_markdown
         return to_markdown(
             config={
@@ -629,28 +632,23 @@ class Investigation:
         )
 
     def save_markdown(self, path: str) -> None:
-        """Save investigation as a markdown file."""
         with open(path, "w") as f:
             f.write(self.to_markdown())
 
     def to_json(self, indent: int = 2) -> str:
-        """Serialize to JSON string."""
         return json.dumps(self.to_dict(), indent=indent, default=str)
 
     def save(self, path: str) -> None:
-        """Save investigation state to a JSON file."""
         with open(path, "w") as f:
             f.write(self.to_json())
 
     @classmethod
     def from_dict(cls, data: dict) -> Investigation:
-        """Deserialize an investigation from a dictionary."""
         from .serialization import investigation_from_dict
         return investigation_from_dict(cls, data)
 
     @classmethod
     def load(cls, path: str) -> Investigation:
-        """Load investigation state from a JSON file."""
         with open(path) as f:
             return cls.from_dict(json.loads(f.read()))
 

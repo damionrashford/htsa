@@ -1,6 +1,6 @@
 <h1 align="center">Worked Examples</h1>
 
-<p align="center"><strong>Six complete investigations across six domains.</strong><br>The framework is abstract. These examples make it concrete.</p>
+<p align="center"><strong>Six complete root cause analysis (RCA) investigations across six domains.</strong><br>The framework is abstract. These worked examples make it concrete — from SRE incident postmortems to medical diagnosis.</p>
 
 ---
 
@@ -8,7 +8,7 @@
 
 | # | Domain | Problem | Key Concepts |
 |:---:|---|---|---|
-| **[01](01_engineering_incident.md)** | **Engineering** | Production 500 errors at 2:47 AM | Branching, convergence, Best-First search, Bayesian updating |
+| **[01](01_engineering_incident.md)** | **SRE / Engineering** | Production 500 errors at 2:47 AM — incident postmortem | Branching, convergence, Best-First search, Bayesian updating |
 | **[02](02_medical_diagnosis.md)** | **Medicine** | 58-year-old with sudden chest pain | DFS under time pressure, safety-critical pruning threshold |
 | **[03](03_security_breach.md)** | **Security** | Customer PII exfiltrated from SaaS DB | BFS for completeness, adversarial evidence, temporal firewall |
 | **[04](04_business_bottleneck.md)** | **Business** | Sales cycle doubled from 45 to 90 days | Groupthink, feedback loops, value-separation principle |

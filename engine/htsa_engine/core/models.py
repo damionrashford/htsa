@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from .enums import (
     EvidenceDirection,
@@ -16,6 +16,9 @@ from .enums import (
     NodeStatus,
     ResolutionType,
 )
+
+if TYPE_CHECKING:
+    from .models_causation import NormalityScore, PNSScore, SecondOrderUncertainty, TimeIndex
 
 
 # ---------------------------------------------------------------------------
@@ -30,6 +33,10 @@ class Evidence:
     direction: EvidenceDirection
     description: str = ""
     id: str = field(default_factory=lambda: uuid.uuid4().hex[:8])
+    # Temporal firewall (math/08): True = captured before investigation was announced
+    pre_investigation: Optional[bool] = None
+    # Granger causality lag in periods; None if not a Granger-based evidence item
+    granger_lag: Optional[int] = None
 
     @property
     def reliability_weight(self) -> float:
@@ -87,6 +94,10 @@ class Resolution:
     priority_impact: int = 0       # 1-5
     priority_recurrence: int = 0   # 1-5
     priority_actionability: int = 0  # 1-5
+    # Intervention theory (math/10): True if this resolution is in the minimal intervention set
+    minimal_intervention: bool = False
+    # coverage(S) = P(E_prevented | do(fix(S))); 0.0 until MinimalInterventionCalculator runs
+    intervention_coverage: float = 0.0
 
     @property
     def priority_score(self) -> int:
@@ -109,6 +120,17 @@ class Node:
     resolution: Optional[Resolution] = None
     reopen_count: int = 0
     pruned_probability: Optional[float] = None  # P at time of pruning
+    # Causation theory (math/09) — populated by causation/ package, all optional
+    pns_score: Optional["PNSScore"] = None
+    normality_score: Optional["NormalityScore"] = None
+    uncertainty: Optional["SecondOrderUncertainty"] = None
+    time_index: Optional["TimeIndex"] = None
+    # HP2015: W-partition variable IDs held fixed during AC2 test
+    hp2015_w_partition: Optional[list[str]] = None
+    # True = passes HP2015 AC2; False = fails; None = not yet tested
+    hp2015_result: Optional[bool] = None
+    # NESS: node IDs forming the minimal sufficient set that contains this node
+    ness_minimal_set: Optional[list[str]] = None
 
     @property
     def is_finding(self) -> bool:

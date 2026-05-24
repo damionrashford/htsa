@@ -4,7 +4,8 @@ HTSA Engine — How to Solve Anything, codified.
 A graph-based investigation engine implementing the HTSA framework:
 Bayesian probability tracking, entropy-based progress measurement,
 search strategy selection, evidence tier classification, depth criteria
-enforcement, bias detection, and feedback loop handling.
+enforcement, bias detection, feedback loop handling, causation theory
+(HP2015 / NESS / PNS), and intervention theory.
 """
 
 from .analysis import (
@@ -16,14 +17,30 @@ from .analysis import (
     BreadthFirstSearch,
     BreakPoint,
     DepthFirstSearch,
+    EvidenceBudget,
+    EvidenceBudgetCalculator,
     EvidenceStore,
     FeedbackLoop,
     FeedbackLoopHandler,
+    HeredityPriorCalculator,
     ProbabilityEngine,
     SearchStrategy,
     SearchType,
     TemporalFirewall,
     create_search,
+)
+from .causation import (
+    ANDGroup,
+    CounterfactualResult,
+    CounterfactualTester,
+    ExperimentalData,
+    InterventionResult,
+    MinimalInterventionCalculator,
+    NormalityScorer,
+    ObservationalData,
+    PNSCalculator,
+    PrioritizedRootCause,
+    prioritize_root_causes,
 )
 from .core import (
     DepthCriteria,
@@ -34,9 +51,13 @@ from .core import (
     InvestigationGraph,
     Node,
     NodeStatus,
+    NormalityScore,
+    PNSScore,
     Resolution,
     ResolutionType,
+    SecondOrderUncertainty,
     SituationMap,
+    TimeIndex,
 )
 from .export import to_markdown
 from .investigation import Investigation, InvestigationMode
@@ -64,6 +85,11 @@ __all__ = [
     "ResolutionType",
     "InteractionType",
     "SituationMap",
+    # Causation models
+    "PNSScore",
+    "NormalityScore",
+    "SecondOrderUncertainty",
+    "TimeIndex",
     # Probability
     "ProbabilityEngine",
     # Search
@@ -76,6 +102,11 @@ __all__ = [
     # Evidence
     "EvidenceStore",
     "TemporalFirewall",
+    # Evidence budget
+    "EvidenceBudgetCalculator",
+    "EvidenceBudget",
+    # Heredity
+    "HeredityPriorCalculator",
     # Bias
     "BiasGuard",
     "BiasAlert",
@@ -95,4 +126,16 @@ __all__ = [
     # LLM
     "LLMAdvisor",
     "ChatCompletionsClient",
+    # Causation
+    "CounterfactualTester",
+    "CounterfactualResult",
+    "PNSCalculator",
+    "ExperimentalData",
+    "ObservationalData",
+    "NormalityScorer",
+    "PrioritizedRootCause",
+    "prioritize_root_causes",
+    "MinimalInterventionCalculator",
+    "InterventionResult",
+    "ANDGroup",
 ]

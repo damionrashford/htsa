@@ -19,6 +19,12 @@ from .models import (
     Resolution,
     SituationMap,
 )
+from .models_causation import (
+    NormalityScore,
+    PNSScore,
+    SecondOrderUncertainty,
+    TimeIndex,
+)
 
 __all__ = [
     # Enums
@@ -35,4 +41,9 @@ __all__ = [
     "SituationMap",
     # Graph
     "InvestigationGraph",
+    # Causation models
+    "PNSScore",
+    "NormalityScore",
+    "SecondOrderUncertainty",
+    "TimeIndex",
 ]

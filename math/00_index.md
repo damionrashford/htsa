@@ -9,7 +9,7 @@ The math is always running underneath. These documents make it visible.
 
 ---
 
-## The Eight Mathematical Foundations
+## The Ten Mathematical Foundations
 
 | # | Concept | What It Answers |
 |---|---|---|
@@ -21,6 +21,8 @@ The math is always running underneath. These documents make it visible.
 | **[06](06_search_algorithms.md)** | **Search Algorithms** | How do you move through the Why tree? |
 | **[07](07_cognitive_biases.md)** | **Cognitive Biases** | What corrupts the investigation? |
 | **[08](08_evidence_evaluation.md)** | **Evidence Evaluation** | How do you know which evidence to trust? |
+| **[09](09_causation_theory.md)** | **Causation Theory** | How do you classify and quantify actual causes? |
+| **[10](10_intervention_theory.md)** | **Intervention Theory** | How do you find the minimal set of fixes? |
 
 ---
 
@@ -30,6 +32,12 @@ Each concept is a layer. They stack on top of each other:
 
 ```
 ┌──────────────────────────────────────────────┐
+│         INTERVENTION THEORY                  │  What to fix and in what order
+│  Minimal set · Coverage · do(fix(C))         │
+├──────────────────────────────────────────────┤
+│         CAUSATION THEORY                     │  What actually caused it
+│  HP2015 · NESS · PNS · Graded causation     │
+├──────────────────────────────────────────────┤
 │         EVIDENCE EVALUATION                  │  What counts as proof
 │  Tiers · Reliability · Validity · Chain      │
 ├──────────────────────────────────────────────┤
@@ -76,6 +84,10 @@ Each concept is a layer. They stack on top of each other:
 
 **Evidence Evaluation** — Not all evidence is equal; quality determines whether the investigation converges on truth or on a plausible fiction.
 
+**Causation Theory** — Binary counterfactuals break on overdetermination and preemption; HP2015 W-partition + NESS minimal sufficiency + PNS scoring give precise, quantitative actual causation.
+
+**Intervention Theory** — Root cause is formalized as do(fix(C)) → outcome restoration; the minimal intervention set is the smallest set of fixes achieving a coverage threshold.
+
 ---
 
 ## How They Map to the Framework
@@ -94,6 +106,9 @@ Each concept is a layer. They stack on top of each other:
 | Stopping at the right depth | Entropy minimum (Info Theory) |
 | Investigation reaching the wrong conclusion | Cognitive Biases |
 | Closing a Why node as a finding | Evidence Evaluation |
+| Classifying preemption and overdetermination | Causation Theory (HP2015) |
+| Prioritizing which root causes to fix first | Causation Theory (PNS, normality) |
+| Finding the smallest set of fixes that works | Intervention Theory |
 
 ---
 
@@ -110,3 +125,5 @@ The math explains each concept. The **[Formal Proofs](../proofs/00_index.md)** g
 ---
 
 <p align="center"><strong>Next →</strong> <strong><a href="01_graph_theory.md">01 — Graph Theory</a></strong></p>
+
+<p align="center"><strong><a href="../research/00_index.md">Research Index</a></strong> — academic sources for v2 additions</p>

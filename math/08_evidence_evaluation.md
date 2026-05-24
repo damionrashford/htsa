@@ -24,6 +24,21 @@ Not all evidence is created equal. Four tiers, from strongest to weakest:
 │  tests). The event left a measurable        │
 │  record.                                    │
 │                                             │
+│  Also includes time-series causal methods:  │
+│  - Granger causality test results: past     │
+│    values of X significantly predict Y      │
+│    beyond Y's own history (requires         │
+│    stationarity; document assumption)       │
+│  - Interrupted time series analysis         │
+│    (requires no contemporaneous shocks)     │
+│  - Regression discontinuity designs         │
+│    (requires continuity at threshold)       │
+│  - Difference-in-differences with           │
+│    validated parallel trends assumption     │
+│  All four require stated assumptions —      │
+│  document those assumptions alongside the   │
+│  result when citing as Tier 1.             │
+│                                             │
 │  CAUTION: Tier 1 is strongest, not          │
 │  infallible. Instruments can lie:           │
 │  miscalibrated sensors, corrupted logs,     │

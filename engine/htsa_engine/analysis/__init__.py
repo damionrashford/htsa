@@ -1,11 +1,14 @@
 """
 Analysis modules — the computational engines of HTSA.
 
-Probability, search, bias detection, evidence management, and feedback loops.
+Probability, search, bias detection, evidence management, feedback loops,
+evidence budget, and heredity prior propagation.
 """
 
 from .bias import AlertLevel, BiasAlert, BiasGuard, BiasType
+from .budget import EvidenceBudget, EvidenceBudgetCalculator
 from .evidence import EvidenceStore, TemporalFirewall
+from .heredity import HeredityPriorCalculator
 from .loops import BreakPoint, FeedbackLoop, FeedbackLoopHandler
 from .probability import ProbabilityEngine, PruningRecord
 from .search import (
@@ -40,4 +43,9 @@ __all__ = [
     "FeedbackLoopHandler",
     "FeedbackLoop",
     "BreakPoint",
+    # Evidence budget
+    "EvidenceBudgetCalculator",
+    "EvidenceBudget",
+    # Heredity
+    "HeredityPriorCalculator",
 ]
