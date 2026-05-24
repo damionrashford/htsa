@@ -1,6 +1,6 @@
 # htsa
 
-CLI for the [HTSA](../../FRAMEWORK.md) investigation algorithm. Run a structured root cause analysis from the terminal.
+CLI for the [HTSA](../../docs/framework.md) investigation algorithm. Run a structured root cause analysis from the terminal.
 
 ## Install
 

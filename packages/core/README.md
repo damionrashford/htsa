@@ -1,6 +1,6 @@
 # @htsa/core
 
-TypeScript engine for the [HTSA](../../FRAMEWORK.md) investigation algorithm. Probabilistic root cause analysis: Bayesian updating, causal DAG traversal, and the 5 Ws/5 Whys framework.
+TypeScript engine for the [HTSA](../../docs/framework.md) investigation algorithm. Probabilistic root cause analysis: Bayesian updating, causal DAG traversal, and the 5 Ws/5 Whys framework.
 
 Zero runtime dependencies. Strict TypeScript throughout.
 

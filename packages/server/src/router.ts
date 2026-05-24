@@ -1,3 +1,5 @@
+import { Elysia, t } from "elysia";
+import { swagger } from "@elysiajs/swagger";
 import {
   Investigation,
   InvestigationMode,
@@ -10,156 +12,186 @@ import {
   type DepthCriteria,
 } from "@htsa/core";
 
-// In-memory store for active investigations
 const sessions = new Map<string, Investigation>();
 
-function json(data: unknown, status = 200): Response {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
+export function createApp() {
+  return (
+    new Elysia()
+      .use(
+        swagger({
+          path: "/swagger",
+          documentation: {
+            info: { title: "HTSA API", version: "2.0.0", description: "Probabilistic root cause analysis via REST" },
+          },
+        }),
+      )
 
-function err(message: string, status = 400): Response {
-  return json({ error: message }, status);
-}
+      .post(
+        "/investigations",
+        ({ body, set }) => {
+          const id = Math.random().toString(36).slice(2, 12);
+          const inv = new Investigation({
+            title: body.title,
+            date: new Date().toISOString().split("T")[0]!,
+            investigator: body.investigator ?? "api",
+            mode: body.mode === "rapid" ? InvestigationMode.Rapid : InvestigationMode.Full,
+            pruningThreshold: body.pruningThreshold ?? 0.05,
+            searchType: SearchType.BestFirst,
+          });
+          sessions.set(id, inv);
+          set.status = 201;
+          return { id, title: body.title };
+        },
+        {
+          body: t.Object({
+            title: t.String(),
+            investigator: t.Optional(t.String()),
+            mode: t.Optional(t.String()),
+            pruningThreshold: t.Optional(t.Number()),
+          }),
+        },
+      )
 
-export async function route(req: Request): Promise<Response> {
-  const url = new URL(req.url);
-  const method = req.method.toUpperCase();
-  const segments = url.pathname.split("/").filter(Boolean);
+      .get("/investigations", () =>
+        [...sessions.entries()].map(([id, inv]) => ({
+          id,
+          title: inv.config.title,
+          mode: inv.config.mode,
+          entropy: inv.entropy,
+          rootCauses: inv.graph.rootCauses().length,
+        })),
+      )
 
-  // POST /investigations — create new investigation
-  if (method === "POST" && segments[0] === "investigations" && segments.length === 1) {
-    const body = await req.json() as {
-      title: string;
-      investigator?: string;
-      mode?: string;
-      pruningThreshold?: number;
-    };
-    if (!body.title) return err("title is required");
+      .get("/investigations/:id", ({ params, set }) => {
+        const inv = sessions.get(params.id);
+        if (!inv) { set.status = 404; return { error: "Not found" }; }
+        return new Response(toJson(inv, true), { headers: { "Content-Type": "application/json" } });
+      })
 
-    const id = Math.random().toString(36).slice(2, 12);
-    const inv = new Investigation({
-      title: body.title,
-      date: new Date().toISOString().split("T")[0]!,
-      investigator: body.investigator ?? "api",
-      mode: body.mode === "rapid" ? InvestigationMode.Rapid : InvestigationMode.Full,
-      pruningThreshold: body.pruningThreshold ?? 0.05,
-      searchType: SearchType.BestFirst,
-    });
-    sessions.set(id, inv);
-    return json({ id, title: body.title }, 201);
-  }
+      .get("/investigations/:id/report", ({ params, set }) => {
+        const inv = sessions.get(params.id);
+        if (!inv) { set.status = 404; return { error: "Not found" }; }
+        return new Response(toMarkdown(inv), { headers: { "Content-Type": "text/markdown" } });
+      })
 
-  // GET /investigations — list all
-  if (method === "GET" && segments[0] === "investigations" && segments.length === 1) {
-    const list = [...sessions.entries()].map(([id, inv]) => ({
-      id,
-      title: inv.config.title,
-      mode: inv.config.mode,
-      entropy: inv.entropy,
-      rootCauses: inv.graph.rootCauses().length,
-    }));
-    return json(list);
-  }
+      .patch(
+        "/investigations/:id/situation",
+        ({ params, body, set }) => {
+          const inv = sessions.get(params.id);
+          if (!inv) { set.status = 404; return { error: "Not found" }; }
+          inv.updateSituation(body as Record<string, string>);
+          return { ok: true };
+        },
+        { body: t.Record(t.String(), t.String()) },
+      )
 
-  const invId = segments[1];
-  if (!invId) return err("Not found", 404);
-  const inv = sessions.get(invId);
+      .post(
+        "/investigations/:id/causal-chain",
+        ({ params, body, set }) => {
+          const inv = sessions.get(params.id);
+          if (!inv) { set.status = 404; return { error: "Not found" }; }
+          set.status = 201;
+          return inv.startCausalChain(body.surfaceWhy);
+        },
+        { body: t.Object({ surfaceWhy: t.String() }) },
+      )
 
-  // GET /investigations/:id — full dump
-  if (method === "GET" && segments[0] === "investigations" && segments.length === 2) {
-    if (!inv) return err("Not found", 404);
-    return new Response(toJson(inv, true), {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+      .post(
+        "/investigations/:id/hypotheses",
+        ({ params, body, set }) => {
+          const inv = sessions.get(params.id);
+          if (!inv) { set.status = 404; return { error: "Not found" }; }
+          set.status = 201;
+          return inv.addHypothesis(body.parentId, body.statement, body.probability);
+        },
+        {
+          body: t.Object({
+            parentId: t.String(),
+            statement: t.String(),
+            probability: t.Optional(t.Number()),
+          }),
+        },
+      )
 
-  // GET /investigations/:id/report — markdown
-  if (method === "GET" && segments[2] === "report") {
-    if (!inv) return err("Not found", 404);
-    return new Response(toMarkdown(inv), {
-      headers: { "Content-Type": "text/markdown" },
-    });
-  }
+      .post(
+        "/investigations/:id/evidence",
+        ({ params, body, set }) => {
+          const inv = sessions.get(params.id);
+          if (!inv) { set.status = 404; return { error: "Not found" }; }
+          const tier = body.tier as EvidenceTier;
+          const direction =
+            body.direction === "contradicts" ? EvidenceDirection.Contradicts : EvidenceDirection.Supports;
+          const opts = body.description ? { description: body.description } : {};
+          const evidence = makeEvidence(body.source, tier, direction, opts);
+          const posterior = inv.addEvidence(body.nodeId, evidence);
+          set.status = 201;
+          return { posterior, evidenceId: evidence.id };
+        },
+        {
+          body: t.Object({
+            nodeId: t.String(),
+            source: t.String(),
+            tier: t.Number(),
+            direction: t.String(),
+            description: t.Optional(t.String()),
+          }),
+        },
+      )
 
-  if (!inv) return err("Not found", 404);
+      .post(
+        "/investigations/:id/root-cause",
+        ({ params, body, set }) => {
+          const inv = sessions.get(params.id);
+          if (!inv) { set.status = 404; return { error: "Not found" }; }
+          const msg = inv.markRootCause(body.nodeId, body.depthCriteria as DepthCriteria);
+          if (msg) { set.status = 400; return { error: msg }; }
+          return { ok: true };
+        },
+        {
+          body: t.Object({
+            nodeId: t.String(),
+            depthCriteria: t.Object({
+              actionability: t.Boolean(),
+              counterfactualClarity: t.Boolean(),
+              systemBoundary: t.Boolean(),
+              diminishingReturns: t.Boolean(),
+            }),
+          }),
+        },
+      )
 
-  // PATCH /investigations/:id/situation
-  if (method === "PATCH" && segments[2] === "situation") {
-    const body = await req.json() as Record<string, string>;
-    inv.updateSituation(body);
-    return json({ ok: true });
-  }
+      .post(
+        "/investigations/:id/resolutions",
+        ({ params, body, set }) => {
+          const inv = sessions.get(params.id);
+          if (!inv) { set.status = 404; return { error: "Not found" }; }
+          const opts: Record<string, unknown> = { type: body.type, change: body.change };
+          if (body.owner !== undefined) opts["owner"] = body.owner;
+          if (body.deadline !== undefined) opts["deadline"] = body.deadline;
+          if (body.priorityImpact !== undefined) opts["priorityImpact"] = body.priorityImpact;
+          if (body.priorityRecurrence !== undefined) opts["priorityRecurrence"] = body.priorityRecurrence;
+          if (body.priorityActionability !== undefined) opts["priorityActionability"] = body.priorityActionability;
+          set.status = 201;
+          return inv.addResolution(body.nodeId, opts as never);
+        },
+        {
+          body: t.Object({
+            nodeId: t.String(),
+            type: t.Union([t.Literal("fix"), t.Literal("mitigate"), t.Literal("accept")]),
+            change: t.String(),
+            owner: t.Optional(t.String()),
+            deadline: t.Optional(t.String()),
+            priorityImpact: t.Optional(t.Number()),
+            priorityRecurrence: t.Optional(t.Number()),
+            priorityActionability: t.Optional(t.Number()),
+          }),
+        },
+      )
 
-  // POST /investigations/:id/causal-chain
-  if (method === "POST" && segments[2] === "causal-chain") {
-    const body = await req.json() as { surfaceWhy: string };
-    const node = inv.startCausalChain(body.surfaceWhy);
-    return json(node, 201);
-  }
-
-  // POST /investigations/:id/hypotheses
-  if (method === "POST" && segments[2] === "hypotheses") {
-    const body = await req.json() as { parentId: string; statement: string; probability?: number };
-    const node = inv.addHypothesis(body.parentId, body.statement, body.probability);
-    return json(node, 201);
-  }
-
-  // POST /investigations/:id/evidence
-  if (method === "POST" && segments[2] === "evidence") {
-    const body = await req.json() as {
-      nodeId: string;
-      source: string;
-      tier: number;
-      direction: string;
-      description?: string;
-    };
-    const tier = body.tier as EvidenceTier;
-    const direction = body.direction === "contradicts"
-      ? EvidenceDirection.Contradicts
-      : EvidenceDirection.Supports;
-    const evOpts = body.description ? { description: body.description } : {};
-    const evidence = makeEvidence(body.source, tier, direction, evOpts);
-    const posterior = inv.addEvidence(body.nodeId, evidence);
-    return json({ posterior, evidenceId: evidence.id });
-  }
-
-  // POST /investigations/:id/root-cause
-  if (method === "POST" && segments[2] === "root-cause") {
-    const body = await req.json() as { nodeId: string; depthCriteria: DepthCriteria };
-    const errMsg = inv.markRootCause(body.nodeId, body.depthCriteria);
-    if (errMsg) return err(errMsg);
-    return json({ ok: true });
-  }
-
-  // POST /investigations/:id/resolutions
-  if (method === "POST" && segments[2] === "resolutions") {
-    const body = await req.json() as {
-      nodeId: string;
-      type: "fix" | "mitigate" | "accept";
-      change: string;
-      owner?: string;
-      deadline?: string;
-      priorityImpact?: number;
-      priorityRecurrence?: number;
-      priorityActionability?: number;
-    };
-    const resOpts: Record<string, unknown> = { type: body.type, change: body.change };
-    if (body.owner !== undefined) resOpts["owner"] = body.owner;
-    if (body.deadline !== undefined) resOpts["deadline"] = body.deadline;
-    if (body.priorityImpact !== undefined) resOpts["priorityImpact"] = body.priorityImpact;
-    if (body.priorityRecurrence !== undefined) resOpts["priorityRecurrence"] = body.priorityRecurrence;
-    if (body.priorityActionability !== undefined) resOpts["priorityActionability"] = body.priorityActionability;
-    const r = inv.addResolution(body.nodeId, resOpts as never);
-    return json(r, 201);
-  }
-
-  // GET /investigations/:id/bias-check
-  if (method === "GET" && segments[2] === "bias-check") {
-    return json(inv.checkBias());
-  }
-
-  return err("Not found", 404);
+      .get("/investigations/:id/bias-check", ({ params, set }) => {
+        const inv = sessions.get(params.id);
+        if (!inv) { set.status = 404; return { error: "Not found" }; }
+        return inv.checkBias();
+      })
+  );
 }

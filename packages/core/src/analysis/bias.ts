@@ -93,6 +93,6 @@ export class BiasGuard {
         });
       }
     }
-    return [];
+    return alerts;
   }
 }

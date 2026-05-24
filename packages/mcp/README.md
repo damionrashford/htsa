@@ -1,6 +1,6 @@
 # @htsa/mcp
 
-MCP server for the [HTSA](../../FRAMEWORK.md) investigation algorithm. Gives any MCP-compatible client (Claude Desktop, Continue, Cursor, etc.) a full root cause analysis capability.
+MCP server for the [HTSA](../../docs/framework.md) investigation algorithm. Gives any MCP-compatible client (Claude Desktop, Continue, Cursor, etc.) a full root cause analysis capability.
 
 ## Run via npx
 

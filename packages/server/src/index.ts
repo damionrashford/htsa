@@ -1,1 +1,1 @@
-export { route } from "./router.js";
+export { createApp } from "./router.js";
