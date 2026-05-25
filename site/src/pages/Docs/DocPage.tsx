@@ -2,8 +2,33 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { useParams, Navigate } from "react-router";
+import { useState, useCallback } from "react";
 import manifest from "@/lib/docs-manifest.json";
 import { teal, border, fgMuted, fg, fgDim } from "@/lib/tokens";
+
+function CopyMdButton({ content }: { content: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = useCallback(() => {
+    navigator.clipboard.writeText(content).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [content]);
+
+  return (
+    <button
+      onClick={copy}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs border transition-colors"
+      style={{
+        borderColor: copied ? `${teal}60` : `${border}`,
+        color: copied ? teal : fgDim,
+        backgroundColor: copied ? `${teal}0d` : "transparent",
+      }}
+    >
+      {copied ? "Copied ✓" : "Copy MD"}
+    </button>
+  );
+}
 
 type DocEntry = typeof manifest.docs[number];
 
@@ -42,16 +67,21 @@ export function DocPage() {
   return (
     <article className="max-w-3xl mx-auto px-8 py-10">
       {/* Page header — from manifest, not from raw markdown */}
-      <div className="mb-8 pb-6 border-b" style={{ borderColor: border }}>
-        <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: fgDim }}>
-          {SECTION_LABELS[doc.section] ?? doc.section}
-        </p>
-        <h1
-          className="text-3xl font-bold leading-tight"
-          style={{ fontFamily: "'Space Grotesk', sans-serif", color: fg }}
-        >
-          {doc.title}
-        </h1>
+      <div className="mb-8 pb-6 border-b flex items-start justify-between gap-4" style={{ borderColor: border }}>
+        <div>
+          <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: fgDim }}>
+            {SECTION_LABELS[doc.section] ?? doc.section}
+          </p>
+          <h1
+            className="text-3xl font-bold leading-tight"
+            style={{ fontFamily: "'Space Grotesk', sans-serif", color: fg }}
+          >
+            {doc.title}
+          </h1>
+        </div>
+        <div className="pt-1 shrink-0">
+          <CopyMdButton content={doc.content} />
+        </div>
       </div>
 
       {/* Markdown body — h1s suppressed since we render the title above */}
