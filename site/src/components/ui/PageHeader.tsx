@@ -1,19 +1,14 @@
-import { Link } from "react-router";
 import { fg, fgDim, fgMuted } from "@/lib/tokens";
 
 interface PageHeaderProps {
   label: string;
   title: string;
   description?: string;
-  backTo?: string;
 }
 
-export function PageHeader({ label, title, description, backTo = "/" }: PageHeaderProps) {
+export function PageHeader({ label, title, description }: PageHeaderProps) {
   return (
     <div className="mb-16">
-      <Link to={backTo} className="text-sm no-underline mb-6 inline-block" style={{ color: fgDim }}>
-        ← Home
-      </Link>
       <p className="text-xs font-mono uppercase tracking-widest mb-3" style={{ color: fgDim }}>
         {label}
       </p>

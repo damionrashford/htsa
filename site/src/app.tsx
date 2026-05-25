@@ -5,7 +5,8 @@ import Home from "./pages/Home";
 import Algorithm from "./pages/Algorithm";
 import MathPage from "./pages/Math";
 import Engine from "./pages/Engine";
-import Compare from "./pages/Compare";
+import { DocsLayout, DocsIndex } from "./pages/Docs";
+import { DocPage } from "./pages/Docs/DocPage";
 
 const router = createHashRouter([
   {
@@ -16,7 +17,14 @@ const router = createHashRouter([
       { path: "algorithm", element: <Algorithm /> },
       { path: "math", element: <MathPage /> },
       { path: "engine", element: <Engine /> },
-      { path: "compare", element: <Compare /> },
+      {
+        path: "docs",
+        element: <DocsLayout />,
+        children: [
+          { index: true, element: <DocsIndex /> },
+          { path: ":slug", element: <DocPage /> },
+        ],
+      },
     ],
   },
 ]);

@@ -1,56 +1,49 @@
-# Contributing to How to Solve Anything
+<h1 align="center">Contributing</h1>
 
-Thanks for your interest in contributing to HTSA.
+> The framework improves when people who use it in the real world share what they find.
 
 ---
 
-## Ways to Contribute
+## What we need most
 
-- **Fix errors** — typos, broken links, incorrect math
-- **Improve clarity** — reword sections that are confusing or ambiguous
-- **Add examples** — real-world applications of the framework across new domains
-- **Extend the math** — propose new mathematical foundations with clear connections to the framework
-- **Report issues** — open an issue if something doesn't make sense
+- **New examples** — real investigations across any domain. Engineering, medicine, business, law, personal decisions. The more varied, the better.
+- **Clarity fixes** — if something confused you on the first read, it will confuse someone else. Open an issue or fix it directly.
+- **Error corrections** — typos, broken links, numbers that don't add up.
+- **Edge cases** — situations where the framework bent but didn't break, or where it needed adapting.
+
+---
+
+## Before you change anything
+
+Read [the framework](../FRAMEWORK.md) in full. It's shorter than it looks. The math and proofs are optional unless you're proposing changes to those sections.
 
 ---
 
 ## Guidelines
 
-1. **Read the framework first.** Understand [framework.md](../framework.md) and the [math index](../math/00_index.md) before proposing changes.
-2. **One change per PR.** Keep pull requests focused on a single improvement.
-3. **Match the existing style.** Centered titles, bold links, consistent markdown formatting.
-4. **Evidence over opinion.** Proposed additions to the math sections should include sources or formal justification.
-5. **No fluff.** Every sentence should earn its place. If a section can be shorter without losing meaning, make it shorter.
+- **One change per pull request.** Focused changes get reviewed faster and merged cleanly.
+- **Show your reasoning.** If you're changing how something works, explain why in the PR description — not just what changed.
+- **Match the existing style.** Plain language, short sentences, no hedging. If a sentence can be cut without losing meaning, cut it.
+- **No opinions without evidence.** Changes to the math or proof sections need sources or formal justification.
 
 ---
 
-## Structure
+## How to contribute
 
-```
-README.md              ← Landing page
-FRAMEWORK.md           ← Complete framework with templates
-DIAGRAMS.md            ← Visual references (SVGs)
-assets/                ← SVG diagrams
-math/
-  00_index.md          ← How the math connects
-  01–08_*.md           ← Eight mathematical foundations
-proofs/
-  00_index.md          ← Proof overview and assumptions
-  01–07_*.md           ← Seven formal proofs
-```
-
----
-
-## Submitting a Pull Request
-
-1. Fork the repository
-2. Create a branch (`git checkout -b your-change`)
+1. Fork the repository on GitHub
+2. Create a branch: `git checkout -b your-change`
 3. Make your changes
-4. Commit with a clear message describing what and why
+4. Commit with a message that says what and why
 5. Push and open a pull request against `main`
 
+That's it. No contributor license agreement, no lengthy process.
+
 ---
 
-## Code of Conduct
+## Code of conduct
 
-Be respectful, be constructive, be specific. That's it.
+Be direct. Be specific. Be useful. Assume good intent.
+
+---
+
+**[Cheat Sheet](cheatsheet.md)** · **[Full Framework](../FRAMEWORK.md)** · **[Examples](../examples/00_index.md)**

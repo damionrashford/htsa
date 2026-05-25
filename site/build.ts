@@ -7,6 +7,14 @@ const publicDir = join(import.meta.dir, "src", "public");
 
 console.log("Building HTSA site...");
 
+// Regenerate docs manifest before bundling
+const genDocs = Bun.spawnSync(["bun", join(import.meta.dir, "scripts", "gen-docs.ts")]);
+if (genDocs.exitCode !== 0) {
+  console.error(genDocs.stderr.toString());
+  process.exit(1);
+}
+console.log(genDocs.stdout.toString().trim());
+
 const result = await Bun.build({
   entrypoints: [join(import.meta.dir, "index.html")],
   outdir,

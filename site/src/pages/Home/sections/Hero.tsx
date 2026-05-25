@@ -3,22 +3,16 @@ import { teal, violet, border, fgMuted, fgDim } from "@/lib/tokens";
 import { Tag } from "@/components/ui/Tag";
 import hero from "../assets/hero.png";
 
-const QUICKSTART = `from htsa_engine.llm import LLMAdvisor
-
-advisor = LLMAdvisor(
-    "https://api.openai.com/v1",
-    api_key="sk-...",
-    model="gpt-4o"
-)
-
-# One call — all 4 layers
-inv = advisor.run(
-    "API returning 500 errors since 2:47 AM, EU region only"
-)
-
-print(inv.root_causes)   # what to fix
-print(inv.entropy)       # investigation confidence
-inv.save("postmortem.json")`;
+// Syntax-highlighted spans for the code preview
+function CodeLine({ children }: { children: React.ReactNode }) {
+  return <div className="leading-7">{children}</div>;
+}
+const kw = (s: string) => <span style={{ color: "oklch(0.68 0.22 272)" }}>{s}</span>;
+const fn = (s: string) => <span style={{ color: "oklch(0.78 0.18 196)" }}>{s}</span>;
+const str = (s: string) => <span style={{ color: "oklch(0.72 0.18 75)" }}>{s}</span>;
+const cm = (s: string) => <span style={{ color: "#4a5e82", fontStyle: "italic" }}>{s}</span>;
+const id = (s: string) => <span style={{ color: "#dce4f5" }}>{s}</span>;
+const dim = (s: string) => <span style={{ color: "#8899bb" }}>{s}</span>;
 
 export function Hero() {
   return (
@@ -104,12 +98,27 @@ export function Hero() {
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#1e2d4a" }} />
               <span className="ml-2 text-xs font-mono" style={{ color: fgDim }}>quick start</span>
             </div>
-            <pre
-              className="p-5 text-sm overflow-x-auto"
-              style={{ backgroundColor: "#080d1a", margin: 0, border: "none", borderRadius: 0 }}
+            <div
+              className="p-5 text-sm font-mono overflow-x-auto"
+              style={{ backgroundColor: "#080d1a", lineHeight: "1.75" }}
             >
-              {QUICKSTART}
-            </pre>
+              <CodeLine>{kw("from")} {id("htsa_engine.llm")} {kw("import")} {fn("LLMAdvisor")}</CodeLine>
+              <CodeLine>&nbsp;</CodeLine>
+              <CodeLine>{id("advisor")} {dim("=")} {fn("LLMAdvisor")}(</CodeLine>
+              <CodeLine>&nbsp;&nbsp;&nbsp;&nbsp;{str('"https://api.openai.com/v1"')},</CodeLine>
+              <CodeLine>&nbsp;&nbsp;&nbsp;&nbsp;{id("api_key")}{dim("=")}{str('"sk-..."')},</CodeLine>
+              <CodeLine>&nbsp;&nbsp;&nbsp;&nbsp;{id("model")}{dim("=")}{str('"gpt-4o"')}</CodeLine>
+              <CodeLine>)</CodeLine>
+              <CodeLine>&nbsp;</CodeLine>
+              <CodeLine>{cm("# One call — all 4 layers")}</CodeLine>
+              <CodeLine>{id("inv")} {dim("=")} {id("advisor")}.{fn("run")}(</CodeLine>
+              <CodeLine>&nbsp;&nbsp;&nbsp;&nbsp;{str('"API returning 500 errors since 2:47 AM, EU region only"')}</CodeLine>
+              <CodeLine>)</CodeLine>
+              <CodeLine>&nbsp;</CodeLine>
+              <CodeLine>{fn("print")}({id("inv")}.{id("root_causes")})&nbsp;&nbsp;&nbsp;{cm("# what to fix")}</CodeLine>
+              <CodeLine>{fn("print")}({id("inv")}.{id("entropy")})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{cm("# investigation confidence")}</CodeLine>
+              <CodeLine>{id("inv")}.{fn("save")}({str('"postmortem.json"')})</CodeLine>
+            </div>
           </div>
         </div>
       </div>

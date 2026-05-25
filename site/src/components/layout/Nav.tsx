@@ -6,7 +6,7 @@ const navItems = [
   { to: "/algorithm", label: "Algorithm" },
   { to: "/math", label: "Math" },
   { to: "/engine", label: "Engine" },
-  { to: "/compare", label: "Compare" },
+  { to: "/docs", label: "Docs" },
 ];
 
 export function Nav() {

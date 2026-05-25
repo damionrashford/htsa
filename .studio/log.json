@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2026-05-24",
+    "macrostructure": "Long Document — Welcome variant",
+    "theme": "custom (deep navy + teal, locked)",
+    "brief": "Docs redesign: consumer welcome page, Guides-first sidebar, guide rewrites in plain English",
+    "scope": "app",
+    "pages": ["docs/welcome", "docs/reader", "sidebar"]
+  }
+]
