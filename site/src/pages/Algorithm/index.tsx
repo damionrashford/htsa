@@ -10,14 +10,14 @@ import { ProofsCTA } from "./sections/ProofsCTA";
 
 export default function Algorithm() {
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
+    <div className="max-w-[90rem] mx-auto px-6 py-10 sm:py-16">
       <PageHeader
         label="The Four Layers"
         title="The HTSA Algorithm"
         description="A formal procedure with defined inputs, outputs, and termination guarantees. Not a template — an algorithm."
       />
 
-      <div className="space-y-6 mb-24">
+      <div className="space-y-4 sm:space-y-6 mb-12 sm:mb-24">
         <SituationMap />
         <LayerConnector from={teal} to={violet} />
         <CausalChain />

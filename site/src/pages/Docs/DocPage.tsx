@@ -4,7 +4,7 @@ import rehypeRaw from "rehype-raw";
 import { useParams, Navigate } from "react-router";
 import { useState, useCallback } from "react";
 import manifest from "@/lib/docs-manifest.json";
-import { teal, border, fgMuted, fg, fgDim } from "@/lib/tokens";
+import { teal, border, fgMuted, fg, fgDim, alpha } from "@/lib/tokens";
 
 function CopyMdButton({ content }: { content: string }) {
   const [copied, setCopied] = useState(false);
@@ -18,11 +18,24 @@ function CopyMdButton({ content }: { content: string }) {
   return (
     <button
       onClick={copy}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs border transition-colors"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs border"
       style={{
-        borderColor: copied ? `${teal}60` : `${border}`,
+        borderColor: copied ? alpha(teal, 38) : border,
         color: copied ? teal : fgDim,
-        backgroundColor: copied ? `${teal}0d` : "transparent",
+        backgroundColor: copied ? alpha(teal, 5) : "transparent",
+        transition: "color 150ms cubic-bezier(0.16,1,0.3,1), border-color 150ms cubic-bezier(0.16,1,0.3,1), background-color 150ms cubic-bezier(0.16,1,0.3,1)",
+      }}
+      onMouseEnter={e => {
+        if (!copied) {
+          e.currentTarget.style.borderColor = alpha(teal, 25);
+          e.currentTarget.style.color = fgMuted;
+        }
+      }}
+      onMouseLeave={e => {
+        if (!copied) {
+          e.currentTarget.style.borderColor = border;
+          e.currentTarget.style.color = fgDim;
+        }
       }}
     >
       {copied ? "Copied ✓" : "Copy MD"}
@@ -34,7 +47,6 @@ type DocEntry = typeof manifest.docs[number];
 
 const bySlug = new Map<string, DocEntry>(manifest.docs.map(d => [d.slug, d]));
 
-// Resolve a relative .md link to a SPA hash route
 function resolveDocHref(href: string, currentPath: string): string | null {
   if (!href.endsWith(".md")) return null;
   const dir = currentPath.includes("/") ? currentPath.split("/").slice(0, -1).join("/") : "";
@@ -66,7 +78,7 @@ export function DocPage() {
 
   return (
     <article className="max-w-3xl mx-auto px-8 py-10">
-      {/* Page header — from manifest, not from raw markdown */}
+      {/* Page header */}
       <div className="mb-8 pb-6 border-b flex items-start justify-between gap-4" style={{ borderColor: border }}>
         <div>
           <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: fgDim }}>
@@ -84,7 +96,7 @@ export function DocPage() {
         </div>
       </div>
 
-      {/* Markdown body — h1s suppressed since we render the title above */}
+      {/* Markdown body */}
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
@@ -92,30 +104,41 @@ export function DocPage() {
           h1: () => null,
           h2: ({ children }) => (
             <h2
-              className="text-xl font-semibold mt-10 mb-4 pb-2 border-b"
-              style={{ fontFamily: "'Space Grotesk', sans-serif", color: fg, borderColor: border }}
+              className="text-xl font-semibold mt-12 mb-4 pb-3 border-b"
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                color: fg,
+                borderColor: alpha(border, 38),
+                borderLeft: `3px solid ${teal}`,
+                paddingLeft: "0.875rem",
+                marginLeft: "-0.875rem",
+              }}
             >
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: fg }}>{children}</h3>
+            <h3 className="text-base font-semibold mt-8 mb-2" style={{ color: fg }}>{children}</h3>
           ),
           h4: ({ children }) => (
-            <h4 className="text-sm font-semibold mt-4 mb-1 uppercase tracking-wide" style={{ color: fgDim }}>{children}</h4>
+            <h4 className="text-sm font-semibold mt-5 mb-1.5 uppercase tracking-wide" style={{ color: fgDim }}>{children}</h4>
           ),
           p: ({ children }) => (
-            <p className="mb-4 leading-7 text-sm" style={{ color: fgMuted }}>{children}</p>
+            <p className="mb-5 text-base" style={{ color: fgMuted, lineHeight: "1.78" }}>{children}</p>
           ),
           a: ({ href, children }) => {
             const resolved = href ? resolveDocHref(href, doc.path) : null;
             return (
               <a
                 href={resolved ?? href}
-                className="no-underline border-b transition-colors"
-                style={{ color: teal, borderColor: `${teal}40` }}
+                className="no-underline border-b"
+                style={{
+                  color: teal,
+                  borderColor: alpha(teal, 21),
+                  transition: "border-color 120ms",
+                }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = teal; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = `${teal}40`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = alpha(teal, 21); }}
               >
                 {children}
               </a>
@@ -128,19 +151,29 @@ export function DocPage() {
             ) : (
               <code
                 className="text-xs px-1.5 py-0.5 rounded font-mono"
-                style={{ backgroundColor: `${teal}15`, color: teal }}
+                style={{ backgroundColor: alpha(teal, 7), color: teal, border: `1px solid ${alpha(teal, 13)}` }}
               >
                 {children}
               </code>
             );
           },
           pre: ({ children }) => (
-            <pre
-              className="rounded-lg px-5 py-4 my-5 overflow-x-auto text-xs font-mono leading-relaxed"
-              style={{ backgroundColor: "#080d1a", border: `1px solid ${border}`, color: "#8899bb" }}
-            >
-              {children}
-            </pre>
+            <div className="my-5 rounded-lg overflow-hidden border" style={{ borderColor: border }}>
+              <div
+                className="flex items-center gap-1.5 px-4 py-2 border-b"
+                style={{ backgroundColor: "var(--color-code-bar)", borderColor: border }}
+              >
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#ff5f5740" }} />
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#febc2e40" }} />
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#28c84040" }} />
+              </div>
+              <pre
+                className="px-5 py-4 overflow-x-auto text-xs font-mono leading-relaxed"
+                style={{ backgroundColor: "var(--color-code-bg)", color: "var(--color-fg-muted)", margin: 0 }}
+              >
+                {children}
+              </pre>
+            </div>
           ),
           table: ({ children }) => (
             <div className="overflow-x-auto my-6 rounded-lg border" style={{ borderColor: border }}>
@@ -148,7 +181,7 @@ export function DocPage() {
             </div>
           ),
           thead: ({ children }) => (
-            <thead style={{ backgroundColor: "#0a111f" }}>{children}</thead>
+            <thead style={{ backgroundColor: "var(--color-paper-2)" }}>{children}</thead>
           ),
           th: ({ children }) => (
             <th
@@ -161,33 +194,39 @@ export function DocPage() {
           td: ({ children }) => (
             <td
               className="px-4 py-3 text-sm border-b"
-              style={{ color: fgMuted, borderColor: `${border}60` }}
+              style={{ color: fgMuted, borderColor: alpha(border, 31) }}
             >
               {children}
             </td>
           ),
           tr: ({ children }) => (
-            <tr className="transition-colors hover:bg-white/[0.02]">{children}</tr>
+            <tr
+              style={{ transition: "background-color 100ms" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = alpha(border, 15); }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"; }}
+            >
+              {children}
+            </tr>
           ),
           blockquote: ({ children }) => (
             <blockquote
               className="border-l-2 pl-5 my-5 py-1"
               style={{ borderColor: teal }}
             >
-              <div className="text-sm italic leading-relaxed" style={{ color: fgMuted }}>{children}</div>
+              <div className="text-base italic leading-[1.75]" style={{ color: fgMuted }}>{children}</div>
             </blockquote>
           ),
           ul: ({ children }) => (
-            <ul className="mb-4 space-y-1.5 text-sm" style={{ color: fgMuted, paddingLeft: "1.25rem" }}>{children}</ul>
+            <ul className="mb-5 space-y-2 text-base" style={{ color: fgMuted, paddingLeft: "1.4rem" }}>{children}</ul>
           ),
           ol: ({ children }) => (
-            <ol className="mb-4 space-y-1.5 text-sm list-decimal" style={{ color: fgMuted, paddingLeft: "1.25rem" }}>{children}</ol>
+            <ol className="mb-5 space-y-2 text-base list-decimal" style={{ color: fgMuted, paddingLeft: "1.4rem" }}>{children}</ol>
           ),
           li: ({ children }) => (
-            <li className="leading-6 pl-1">{children}</li>
+            <li className="leading-[1.7] pl-1">{children}</li>
           ),
           hr: () => (
-            <hr className="my-8" style={{ borderColor: border }} />
+            <hr className="my-8" style={{ borderColor: alpha(border, 38) }} />
           ),
           strong: ({ children }) => (
             <strong className="font-semibold" style={{ color: fg }}>{children}</strong>

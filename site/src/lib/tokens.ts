@@ -1,14 +1,27 @@
-export const teal   = "oklch(0.72 0.20 196)";
-export const violet = "oklch(0.68 0.22 272)";
-export const amber  = "oklch(0.78 0.18 75)";
-export const green  = "oklch(0.72 0.18 155)";
-export const red    = "oklch(0.65 0.22 25)";
+/* CSS variable references — resolve to dark or light theme values via [data-theme] */
+export const teal   = "var(--color-teal)";
+export const violet = "var(--color-violet)";
+export const amber  = "var(--color-amber)";
+export const green  = "var(--color-green)";
+export const red    = "var(--color-red)";
 
-export const bg     = "#080d1a";
-export const bgAlt  = "#0f1628";
-export const border = "#1e2d4a";
-export const card   = "#111827";
+export const bg     = "var(--color-paper)";
+export const bgAlt  = "var(--color-paper-2)";
+export const border = "var(--color-border)";
+export const card   = "var(--color-card)";
 
-export const fg     = "#dce4f5";
-export const fgMuted = "#8899bb";
-export const fgDim  = "#4a5e82";
+export const fg     = "var(--color-fg)";
+export const fgMuted = "var(--color-fg-muted)";
+export const fgDim  = "var(--color-fg-dim)";
+
+/* alpha(token, pct) — mix token with transparent at pct% opacity.
+   Replaces the invalid `${token}40` hex-suffix pattern throughout the codebase. */
+export const alpha = (token: string, pct: number): string =>
+  `color-mix(in oklch, ${token} ${pct}%, transparent)`;
+
+/* Convenience shorthands for common opacity levels */
+export const teala  = (pct: number) => alpha(teal, pct);
+export const violeta = (pct: number) => alpha(violet, pct);
+export const ambera = (pct: number) => alpha(amber, pct);
+export const greena = (pct: number) => alpha(green, pct);
+export const bordera = (pct: number) => alpha(border, pct);

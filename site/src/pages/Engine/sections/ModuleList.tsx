@@ -1,14 +1,14 @@
-import { teal, violet, amber, fgDim, fgMuted } from "@/lib/tokens";
+import { teal, violet, amber, fgDim, fgMuted, alpha } from "@/lib/tokens";
 
 const groups = [
   {
-    pkg: "htsa_engine/",
+    pkg: "src/",
     label: "Core",
     color: teal,
     modules: [
-      { file: "investigation.py", what: "Orchestrator tying all modules together" },
-      { file: "serialization.py", what: "JSON round-trip for full investigation state" },
-      { file: "export.py", what: "Markdown rendering matching FRAMEWORK.md templates" },
+      { file: "Investigation.ts", what: "Orchestrator tying all modules together" },
+      { file: "Serialization.ts", what: "JSON round-trip for full investigation state" },
+      { file: "Export.ts", what: "Markdown rendering matching FRAMEWORK.md templates" },
     ],
   },
   {
@@ -16,9 +16,9 @@ const groups = [
     label: "Types",
     color: "oklch(0.68 0.22 272)",
     modules: [
-      { file: "enums.py", what: "All enumerations — zero dependencies" },
-      { file: "models.py", what: "Evidence, Node, DepthCriteria, Resolution, SituationMap" },
-      { file: "graph.py", what: "DAG structure, convergence detection" },
+      { file: "enums.ts", what: "All enumerations — zero dependencies" },
+      { file: "models.ts", what: "Evidence, Node, DepthCriteria, Resolution, SituationMap" },
+      { file: "graph.ts", what: "DAG structure, convergence detection" },
     ],
   },
   {
@@ -26,12 +26,12 @@ const groups = [
     label: "Analysis",
     color: "oklch(0.72 0.18 155)",
     modules: [
-      { file: "probability.py", what: "Bayesian updates, entropy tracking, pruning with recovery" },
-      { file: "search.py", what: "Best-First (live priority), DFS (stack), BFS (queue)" },
-      { file: "bias.py", what: "7 cognitive hazard detectors (warning + blocking alerts)" },
-      { file: "evidence.py", what: "Tier classification, temporal firewall, conflict detection" },
-      { file: "budget.py", what: "KL-based evidence budget: how many Tier-1 items are needed?" },
-      { file: "heredity.py", what: "BayesFLo ancestor-informed prior propagation" },
+      { file: "probability.ts", what: "Bayesian updates, entropy tracking, pruning with recovery" },
+      { file: "search.ts", what: "Best-First (live priority), DFS (stack), BFS (queue)" },
+      { file: "bias.ts", what: "7 cognitive hazard detectors (warning + blocking alerts)" },
+      { file: "evidence.ts", what: "Tier classification, temporal firewall, conflict detection" },
+      { file: "budget.ts", what: "KL-based evidence budget: how many Tier-1 items are needed?" },
+      { file: "heredity.ts", what: "BayesFLo ancestor-informed prior propagation" },
     ],
   },
   {
@@ -39,10 +39,10 @@ const groups = [
     label: "Causation",
     color: amber,
     modules: [
-      { file: "counterfactual.py", what: "HP2015 W-partition + NESS three-stage test" },
-      { file: "pns.py", what: "PN, PS, PNS bounds — causation strength scoring" },
-      { file: "graded.py", what: "causal_grade = PNS × (1 − normality)" },
-      { file: "intervention.py", what: "Minimal intervention set via coverage optimization" },
+      { file: "counterfactual.ts", what: "HP2015 W-partition + NESS three-stage test" },
+      { file: "pns.ts", what: "PN, PS, PNS bounds — causation strength scoring" },
+      { file: "graded.ts", what: "causalGrade = PNS × (1 − normality)" },
+      { file: "intervention.ts", what: "Minimal intervention set via coverage optimization" },
     ],
   },
   {
@@ -50,8 +50,8 @@ const groups = [
     label: "Resolution",
     color: violet,
     modules: [
-      { file: "engine.py", what: "Fix/mitigate/accept, counterfactual test, priority scoring" },
-      { file: "verification.py", what: "Verification windows, learning loop" },
+      { file: "engine.ts", what: "Fix/mitigate/accept, counterfactual test, priority scoring" },
+      { file: "verification.ts", what: "Verification windows, learning loop" },
     ],
   },
   {
@@ -59,9 +59,9 @@ const groups = [
     label: "LLM",
     color: "oklch(0.72 0.18 296)",
     modules: [
-      { file: "client.py", what: "Provider-agnostic chat completions client (stdlib only)" },
-      { file: "prompts.py", what: "System prompt + prompt builders for each judgment type" },
-      { file: "advisor.py", what: "LLMAdvisor — fills judgment slots, drives auto-investigation" },
+      { file: "client.ts", what: "Provider-agnostic chat completions client (fetch only)" },
+      { file: "prompts.ts", what: "System prompt + prompt builders for each judgment type" },
+      { file: "advisor.ts", what: "LLMAdvisor — fills judgment slots, drives auto-investigation" },
     ],
   },
 ];
@@ -74,14 +74,14 @@ export function ModuleList() {
       </p>
       <div className="space-y-3">
         {groups.map(({ pkg, label, color, modules }) => (
-          <div key={pkg} className="rounded-xl border overflow-hidden" style={{ borderColor: `${color}30` }}>
+          <div key={pkg} className="rounded-xl border overflow-hidden" style={{ borderColor: alpha(color, 19) }}>
             <div
               className="flex items-center gap-3 px-4 py-2 border-b"
-              style={{ backgroundColor: `${color}0a`, borderColor: `${color}30` }}
+              style={{ backgroundColor: alpha(color, 6), borderColor: alpha(color, 19) }}
             >
               <span
                 className="text-xs font-mono font-bold px-2 py-0.5 rounded"
-                style={{ backgroundColor: `${color}18`, color }}
+                style={{ backgroundColor: alpha(color, 11), color }}
               >
                 {label}
               </span>
@@ -92,7 +92,7 @@ export function ModuleList() {
                 <div
                   key={m.file}
                   className="flex items-start gap-4 px-4 py-2.5 text-xs border-b last:border-b-0"
-                  style={{ backgroundColor: i % 2 === 0 ? "#080d1a" : "#0a1020", borderColor: `${color}15` }}
+                  style={{ backgroundColor: i % 2 === 0 ? "var(--color-code-bg)" : "var(--color-code-bar)", borderColor: alpha(color, 9) }}
                 >
                   <code className="font-mono shrink-0" style={{ color }}>{m.file}</code>
                   <span className="leading-relaxed" style={{ color: fgMuted }}>{m.what}</span>

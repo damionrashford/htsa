@@ -1,4 +1,4 @@
-import { teal, violet, amber, border, card, fgDim, fgMuted } from "@/lib/tokens";
+import { teal, violet, amber, border, card, bgAlt, fgDim, fgMuted, alpha } from "@/lib/tokens";
 
 const stack = [
   { num: 10, name: "Intervention Theory", role: "What to fix and in what order", color: violet },
@@ -15,7 +15,7 @@ const stack = [
 
 export function MathStack() {
   return (
-    <div className="mb-20">
+    <div className="mb-12 sm:mb-20">
       <p className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: fgDim }}>
         How they stack
       </p>
@@ -23,14 +23,18 @@ export function MathStack() {
         {stack.map((layer, i) => (
           <div
             key={layer.name}
-            className="flex items-center gap-5 px-5 py-3 border-b last:border-b-0 transition-colors group"
-            style={{ borderColor: border, backgroundColor: i % 2 === 0 ? card : "#0d1525" }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = `${layer.color}0a`; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = i % 2 === 0 ? card : "#0d1525"; }}
+            className="flex items-center gap-5 px-5 py-3 border-b last:border-b-0"
+            style={{
+              borderColor: border,
+              backgroundColor: i % 2 === 0 ? card : bgAlt,
+              transition: "background-color 150ms cubic-bezier(0.16,1,0.3,1)",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = alpha(layer.color, 6); }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = i % 2 === 0 ? card : bgAlt; }}
           >
             <span
               className="text-xs font-mono w-6 text-right shrink-0 tabular-nums"
-              style={{ color: `${layer.color}80` }}
+              style={{ color: alpha(layer.color, 50) }}
             >
               {String(layer.num).padStart(2, "0")}
             </span>

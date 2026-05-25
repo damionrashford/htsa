@@ -1,13 +1,13 @@
-import { teal, fg, fgMuted } from "@/lib/tokens";
+import { teal, fg, fgMuted, alpha } from "@/lib/tokens";
 
 export function ResearchCTA() {
   return (
     <div
       className="mt-16 rounded-xl p-8 border text-center"
-      style={{ borderColor: `${teal}30`, backgroundColor: `${teal}08` }}
+      style={{ borderColor: alpha(teal, 19), backgroundColor: alpha(teal, 5) }}
     >
-      <p className="text-sm font-medium mb-2" style={{ color: fg }}>Research foundations</p>
-      <p className="text-sm mb-4" style={{ color: fgMuted }}>
+      <p className="text-base font-medium mb-2" style={{ color: fg }}>Research foundations</p>
+      <p className="text-base mb-5 leading-relaxed" style={{ color: fgMuted }}>
         12 paper summaries covering HP2015, NESS, PNS, causal entropy, heredity priors, and more.
         Each gap in the original framework is documented, traced to a paper, and closed by a specific implementation phase.
       </p>

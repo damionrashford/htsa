@@ -9,7 +9,7 @@ export function DocsLayout() {
       {/* Sidebar */}
       <aside
         className="hidden md:block w-60 shrink-0 border-r overflow-y-auto sticky top-14 max-h-[calc(100vh-56px)]"
-        style={{ borderColor: border, backgroundColor: "#05090f" }}
+        style={{ borderColor: border, backgroundColor: "var(--color-paper)" }}
       >
         <Sidebar />
       </aside>

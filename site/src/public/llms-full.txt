@@ -10,7 +10,7 @@
 **Type**: Formal investigation framework and algorithm
 **License**: MIT
 **Repository**: https://github.com/damionrashford/htsa
-**Site**: https://damionrashford.github.io/htsa/
+**Site**: https://htsa.io/
 **Author**: Damion Rashford
 
 HTSA is a structured method for finding the root cause of any problem. It is not a productivity framework, a mental model checklist, or a management tool. It is a formal algorithm with mathematical proofs, Bayesian probability at every decision node, and guaranteed termination.
@@ -299,12 +299,12 @@ Burnout investigation, relationship failures, recurring mistakes, decision analy
 
 ## Sitemap
 
-- Home: https://damionrashford.github.io/htsa/
-- Algorithm (4 layers): https://damionrashford.github.io/htsa/#/algorithm
-- Math (8 foundations): https://damionrashford.github.io/htsa/#/math
-- Engine (TypeScript implementation): https://damionrashford.github.io/htsa/#/engine
-- Docs landing: https://damionrashford.github.io/htsa/#/docs
-- Cheat Sheet: https://damionrashford.github.io/htsa/#/docs/guides--cheatsheet
-- Anti-Patterns: https://damionrashford.github.io/htsa/#/docs/guides--antipatterns
-- Examples index: https://damionrashford.github.io/htsa/#/docs/examples--00_index
+- Home: https://htsa.io/
+- Algorithm (4 layers): https://htsa.io/#/algorithm
+- Math (8 foundations): https://htsa.io/#/math
+- Engine (TypeScript implementation): https://htsa.io/#/engine
+- Docs landing: https://htsa.io/#/docs
+- Cheat Sheet: https://htsa.io/#/docs/guides--cheatsheet
+- Anti-Patterns: https://htsa.io/#/docs/guides--antipatterns
+- Examples index: https://htsa.io/#/docs/examples--00_index
 - GitHub: https://github.com/damionrashford/htsa

@@ -1,0 +1,412 @@
+{
+  "schema_version": "0.2.0",
+  "source_url": null,
+  "fetched_at": "2026-05-24T23:15:10.821Z",
+  "updated_at": "2026-05-24T23:18:32.977Z",
+  "tokens": {
+    "color": [
+      {
+        "name": "bg",
+        "value": "#000205",
+        "category": "color",
+        "role": "background",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "bg-alt",
+        "value": "#00050c",
+        "category": "color",
+        "role": "background-alt",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "bg-card",
+        "value": "#02080e",
+        "category": "color",
+        "role": "surface",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "border",
+        "value": "#465e6f",
+        "category": "color",
+        "role": "border",
+        "provenance": {
+          "source_type": "auto-contrast",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted",
+          "corrected_at": "2026-05-24T23:18:32.977Z",
+          "correction_reason": "border/bg was 1.21:1 (required 3:1)",
+          "original_value": "#061d2b"
+        },
+        "confidence": 0.9
+      },
+      {
+        "name": "fg",
+        "value": "#c1dcf0",
+        "category": "color",
+        "role": "foreground",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "fg-muted",
+        "value": "#5f85a1",
+        "category": "color",
+        "role": "foreground-muted",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "fg-dim",
+        "value": "#2e4b60",
+        "category": "color",
+        "role": "foreground-dim",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "teal",
+        "value": "#00c7cd",
+        "category": "color",
+        "role": "accent-primary",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "violet",
+        "value": "#6c86ff",
+        "category": "color",
+        "role": "accent-secondary",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "amber",
+        "value": "#f9a300",
+        "category": "color",
+        "role": "accent-warning",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "green",
+        "value": "#00c470",
+        "category": "color",
+        "role": "accent-success",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "red",
+        "value": "#f94144",
+        "category": "color",
+        "role": "accent-error",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-confidence-weighted-oklch",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      }
+    ],
+    "typography": [
+      {
+        "name": "font-display",
+        "value": "\"Space Grotesk\", ui-sans-serif, system-ui, sans-serif",
+        "role": "display",
+        "confidence": 1,
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-categorical-typography",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "highest-wins"
+        },
+        "_from": "/Users/damionrashford/Projects/htsa/design/drafts/from-site-2025.json",
+        "category": "typography"
+      },
+      {
+        "name": "font-body",
+        "value": "\"DM Sans\", ui-sans-serif, system-ui, sans-serif",
+        "role": "body",
+        "confidence": 1,
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-categorical-typography",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "highest-wins"
+        },
+        "_from": "/Users/damionrashford/Projects/htsa/design/drafts/from-site-2025.json",
+        "category": "typography"
+      },
+      {
+        "name": "font-mono",
+        "value": "\"JetBrains Mono\", \"Fira Code\", ui-monospace, monospace",
+        "role": "mono",
+        "confidence": 1,
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-categorical-typography",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "highest-wins"
+        },
+        "_from": "/Users/damionrashford/Projects/htsa/design/drafts/from-site-2025.json",
+        "category": "typography"
+      }
+    ],
+    "spacing": [],
+    "text_scale": [],
+    "motion": [
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "category": "motion",
+        "role": "interaction",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-numeric-motion",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "duration-base",
+        "value": "200ms",
+        "category": "motion",
+        "role": "transition",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-numeric-motion",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      },
+      {
+        "name": "easing-standard",
+        "value": "0",
+        "category": "motion",
+        "role": "easing",
+        "provenance": {
+          "source_type": "merged",
+          "extraction_mode": "fast",
+          "extracted_at": "2026-05-24T23:15:10.821Z",
+          "extractor_pass": "merge-numeric-motion",
+          "sources": [
+            {
+              "source_type": "manual"
+            }
+          ],
+          "merge_strategy": "confidence-weighted"
+        },
+        "confidence": 1
+      }
+    ],
+    "depth": []
+  },
+  "derived": {
+    "states": {},
+    "contrast": [
+      {
+        "fg": "fg",
+        "bg": "bg",
+        "ratio": 14.6,
+        "wcag": "AAA"
+      },
+      {
+        "fg": "border",
+        "bg": "bg",
+        "ratio": 3.06,
+        "wcag": "AA-large"
+      }
+    ]
+  },
+  "coverage_flags": {
+    "js_rendered": false,
+    "css_in_js_likely": false,
+    "theme_variants_found": [],
+    "responsive_variants_found": []
+  },
+  "confidence_global": 1,
+  "extraction_mode": "fast",
+  "history": [
+    {
+      "at": "2026-05-24T23:15:10.821Z",
+      "op": "merge",
+      "summary": "merged 1 drafts (0 conflicts)"
+    },
+    {
+      "at": "2026-05-24T23:15:13.445Z",
+      "op": "edit",
+      "summary": "derive-states cascaded 0 roles () in light mode"
+    },
+    {
+      "at": "2026-05-24T23:18:32.957Z",
+      "op": "edit",
+      "summary": "derive-states cascaded 0 roles () in light mode"
+    },
+    {
+      "at": "2026-05-24T23:18:32.977Z",
+      "op": "edit",
+      "summary": "auto-contrast: border: #061d2b → #465e6f (1.21:1 → 3.06:1, required 3:1)"
+    }
+  ]
+}

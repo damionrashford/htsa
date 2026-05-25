@@ -9,9 +9,9 @@ import { ModuleList } from "./sections/ModuleList";
 
 export default function Engine() {
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
+    <div className="max-w-[90rem] mx-auto px-6 py-10 sm:py-16">
       <PageHeader
-        label="Python Library · v2.0.0"
+        label="TypeScript Library · v2.0.0"
         title="HTSA Engine"
         description="The algorithm, codified. A graph-based incident investigation engine implementing the HTSA algorithm. Zero external dependencies. Works with any LLM provider."
       />

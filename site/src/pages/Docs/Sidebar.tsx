@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useParams, Link } from "react-router";
-import { teal, border, fgMuted, fgDim } from "@/lib/tokens";
+import { teal, border, fg, fgMuted, fgDim, alpha } from "@/lib/tokens";
 import manifest from "@/lib/docs-manifest.json";
 
 const SECTION_LABELS: Record<string, string> = {
@@ -12,7 +12,6 @@ const SECTION_LABELS: Record<string, string> = {
   research: "Research",
 };
 
-// Consumer-first order: guides and examples up top, advanced at bottom
 const PRIMARY_ORDER = ["guides", "examples", "root"];
 const ADVANCED_ORDER = ["math", "proofs", "research"];
 
@@ -36,8 +35,8 @@ function Chevron({ open }: { open: boolean }) {
       fill="none"
       style={{
         transform: open ? "rotate(180deg)" : "rotate(0deg)",
-        transition: "transform 150ms ease",
-        opacity: 0.5,
+        transition: "transform 150ms cubic-bezier(0.16,1,0.3,1)",
+        opacity: 0.4,
         flexShrink: 0,
       }}
     >
@@ -62,13 +61,16 @@ function SectionGroup({
   onNavigate?: () => void;
 }) {
   return (
-    <div className="mb-1">
+    <div className="mb-0.5">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-2 py-1.5 rounded text-left transition-colors"
-        style={{ color: hasActive ? teal : fgDim }}
-        onMouseEnter={e => { if (!hasActive) (e.currentTarget as HTMLElement).style.color = fgMuted; }}
-        onMouseLeave={e => { if (!hasActive) (e.currentTarget as HTMLElement).style.color = fgDim; }}
+        className="w-full flex items-center justify-between px-2 py-1.5 rounded text-left"
+        style={{
+          color: hasActive ? teal : fgDim,
+          transition: "color 120ms",
+        }}
+        onMouseEnter={e => { if (!hasActive) e.currentTarget.style.color = fgMuted; }}
+        onMouseLeave={e => { if (!hasActive) e.currentTarget.style.color = fgDim; }}
       >
         <span className="text-xs font-semibold uppercase tracking-widest">
           {SECTION_LABELS[section] ?? section}
@@ -77,19 +79,37 @@ function SectionGroup({
       </button>
 
       {isOpen && (
-        <ul className="flex flex-col gap-0.5 mt-0.5 mb-2">
+        <ul className="flex flex-col mt-0.5 mb-2">
           {items.map(doc => (
             <li key={doc.slug}>
               <NavLink
                 to={`/docs/${doc.slug}`}
                 onClick={onNavigate}
-                className="block px-2 py-1.5 rounded text-sm no-underline transition-colors leading-snug"
+                className="block py-1.5 text-sm no-underline leading-snug relative"
                 style={({ isActive }) => ({
                   color: isActive ? teal : fgMuted,
-                  backgroundColor: isActive ? `${teal}12` : "transparent",
-                  fontWeight: isActive ? 500 : undefined,
+                  fontWeight: isActive ? 500 : 400,
                   paddingLeft: "0.75rem",
+                  paddingRight: "0.5rem",
+                  borderLeft: isActive ? `2px solid ${teal}` : "2px solid transparent",
+                  backgroundColor: isActive ? alpha(teal, 5) : "transparent",
+                  borderRadius: "0 4px 4px 0",
+                  transition: "color 120ms, background-color 120ms, border-left-color 120ms",
                 })}
+                onMouseEnter={e => {
+                  const el = e.currentTarget;
+                  if (el.getAttribute("aria-current") !== "page") {
+                    el.style.color = fg;
+                    el.style.backgroundColor = alpha(border, 25);
+                  }
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget;
+                  if (el.getAttribute("aria-current") !== "page") {
+                    el.style.color = fgMuted;
+                    el.style.backgroundColor = "transparent";
+                  }
+                }}
               >
                 {doc.title}
               </NavLink>
@@ -99,7 +119,7 @@ function SectionGroup({
       )}
 
       {!isOpen && (
-        <div className="mx-2 mb-1" style={{ height: 1, backgroundColor: `${border}40` }} />
+        <div className="mx-2 mb-2" style={{ height: 1, backgroundColor: alpha(border, 25) }} />
       )}
     </div>
   );
@@ -134,17 +154,21 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <Link
           to="/docs"
           onClick={onNavigate}
-          className="flex items-center gap-2 px-2 py-1.5 rounded text-sm no-underline transition-colors"
-          style={{ color: !slug ? teal : fgDim }}
-          onMouseEnter={e => { if (slug) (e.currentTarget as HTMLElement).style.color = fgMuted; }}
-          onMouseLeave={e => { if (slug) (e.currentTarget as HTMLElement).style.color = fgDim; }}
+          className="flex items-center gap-2 px-2 py-1.5 rounded text-sm no-underline"
+          style={{
+            color: !slug ? teal : fgDim,
+            fontWeight: !slug ? 600 : 400,
+            transition: "color 120ms",
+          }}
+          onMouseEnter={e => { if (slug) e.currentTarget.style.color = fgMuted; }}
+          onMouseLeave={e => { if (slug) e.currentTarget.style.color = fgDim; }}
         >
           <span className="text-xs font-semibold uppercase tracking-widest">Home</span>
         </Link>
-        <div className="mx-2 mt-1 mb-2" style={{ height: 1, backgroundColor: `${border}40` }} />
+        <div className="mx-2 mt-1.5 mb-2.5" style={{ height: 1, backgroundColor: alpha(border, 25) }} />
       </div>
 
-      {/* Primary sections — Guides, Examples, Overview */}
+      {/* Primary sections */}
       {PRIMARY_ORDER.filter(s => groups.has(s)).map(section => (
         <SectionGroup
           key={section}
@@ -159,20 +183,23 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       {/* Advanced collapsible group */}
       {ADVANCED_ORDER.some(s => groups.has(s)) && (
-        <div className="mt-1">
+        <div className="mt-2">
           <button
             onClick={() => setAdvancedOpen(p => !p)}
-            className="w-full flex items-center justify-between px-2 py-1.5 rounded text-left transition-colors"
-            style={{ color: isAdvancedActive ? teal : fgDim }}
-            onMouseEnter={e => { if (!isAdvancedActive) (e.currentTarget as HTMLElement).style.color = fgMuted; }}
-            onMouseLeave={e => { if (!isAdvancedActive) (e.currentTarget as HTMLElement).style.color = fgDim; }}
+            className="w-full flex items-center justify-between px-2 py-1.5 rounded text-left"
+            style={{
+              color: isAdvancedActive ? teal : fgDim,
+              transition: "color 120ms",
+            }}
+            onMouseEnter={e => { if (!isAdvancedActive) e.currentTarget.style.color = fgMuted; }}
+            onMouseLeave={e => { if (!isAdvancedActive) e.currentTarget.style.color = fgDim; }}
           >
             <span className="text-xs font-semibold uppercase tracking-widest">Advanced</span>
             <Chevron open={advancedOpen} />
           </button>
 
           {advancedOpen && (
-            <div className="ml-2 mt-1">
+            <div className="mt-0.5">
               {ADVANCED_ORDER.filter(s => groups.has(s)).map(section => (
                 <SectionGroup
                   key={section}
@@ -182,13 +209,13 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                   hasActive={activeSection === section}
                   onToggle={() => toggle(section)}
                   onNavigate={onNavigate}
-                        />
+                />
               ))}
             </div>
           )}
 
           {!advancedOpen && (
-            <div className="mx-2 mb-1" style={{ height: 1, backgroundColor: `${border}40` }} />
+            <div className="mx-2 mb-1" style={{ height: 1, backgroundColor: alpha(border, 25) }} />
           )}
         </div>
       )}

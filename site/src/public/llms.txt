@@ -69,20 +69,20 @@ https://github.com/damionrashford/htsa
 
 ## Primary URL
 
-https://damionrashford.github.io/htsa/
+https://htsa.io/
 
 ## Key Pages
 
-- Framework: https://damionrashford.github.io/htsa/#/algorithm
-- The Math: https://damionrashford.github.io/htsa/#/math
-- Engine / Implementation: https://damionrashford.github.io/htsa/#/engine
-- Docs / Guides: https://damionrashford.github.io/htsa/#/docs
-- Cheat Sheet: https://damionrashford.github.io/htsa/#/docs/guides--cheatsheet
-- Examples: https://damionrashford.github.io/htsa/#/docs/examples--00_index
+- Framework: https://htsa.io/#/algorithm
+- The Math: https://htsa.io/#/math
+- Engine / Implementation: https://htsa.io/#/engine
+- Docs / Guides: https://htsa.io/#/docs
+- Cheat Sheet: https://htsa.io/#/docs/guides--cheatsheet
+- Examples: https://htsa.io/#/docs/examples--00_index
 
 ## Full Content
 
-https://damionrashford.github.io/htsa/llms-full.txt
+https://htsa.io/llms-full.txt
 
 ## License
 

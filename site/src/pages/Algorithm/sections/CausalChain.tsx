@@ -1,4 +1,4 @@
-import { teal, violet, amber, bg, border, fgMuted, fgDim } from "@/lib/tokens";
+import { teal, violet, amber, bg, border, fgMuted, fgDim, alpha } from "@/lib/tokens";
 import { LayerCard } from "../components/LayerCard";
 
 const depthCriteria = [
@@ -24,7 +24,7 @@ const WHY_TREE = `Why (surface)
 export function CausalChain() {
   return (
     <LayerCard num="LAYER 02" title="Causal Chain — The 5 Whys" color={violet}>
-      <p className="text-sm mb-6" style={{ color: fgMuted }}>
+      <p className="text-base mb-6 leading-relaxed" style={{ color: fgMuted }}>
         Start at the surface Why from Layer 1. Ask why again. Keep going until you hit something
         you can actually change — defined by four explicit depth criteria, not a count of five.
       </p>
@@ -50,7 +50,7 @@ export function CausalChain() {
               <div
                 key={name}
                 className="rounded-lg p-3 border"
-                style={{ borderColor: `${violet}25`, backgroundColor: `${violet}08` }}
+                style={{ borderColor: alpha(violet, 15), backgroundColor: alpha(violet, 5) }}
               >
                 <div className="text-xs font-medium mb-0.5" style={{ color: violet }}>{name}</div>
                 <div className="text-xs" style={{ color: fgMuted }}>{desc}</div>
@@ -66,7 +66,7 @@ export function CausalChain() {
             <div
               key={name}
               className="rounded p-2"
-              style={{ backgroundColor: `${color}10`, border: `1px solid ${color}30` }}
+              style={{ backgroundColor: alpha(color, 6), border: `1px solid ${alpha(color, 19)}` }}
             >
               <div className="font-mono font-medium mb-0.5" style={{ color }}>{name}</div>
               <div style={{ color: fgDim }}>{desc}</div>

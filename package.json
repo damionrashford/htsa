@@ -1,5 +1,14 @@
 {
   "name": "htsa-workspace",
   "private": true,
-  "workspaces": ["packages/*"]
+  "workspaces": ["packages/*"],
+  "devDependencies": {
+    "playwright": "latest"
+  },
+  "dependencies": {
+    "@types/culori": "^4.0.1",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "culori": "^4.0.2"
+  }
 }

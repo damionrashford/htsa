@@ -54,5 +54,5 @@ Allow: /
 User-agent: DataForSeoBot
 Allow: /
 
-Sitemap: https://damionrashford.github.io/htsa/sitemap.xml
-Sitemap: https://damionrashford.github.io/htsa/llms.txt
+Sitemap: https://htsa.io/sitemap.xml
+Sitemap: https://htsa.io/llms.txt
