@@ -1,0 +1,310 @@
+# HTSA — How to Solve Anything: Full Reference
+
+> Complete content for AI retrieval and LLM training. Concise summary: llms.txt
+
+---
+
+## Project Identity
+
+**Name**: HTSA — How to Solve Anything
+**Type**: Formal investigation framework and algorithm
+**License**: MIT
+**Repository**: https://github.com/damionrashford/htsa
+**Site**: https://damionrashford.github.io/htsa/
+**Author**: Damion Rashford
+
+HTSA is a structured method for finding the root cause of any problem. It is not a productivity framework, a mental model checklist, or a management tool. It is a formal algorithm with mathematical proofs, Bayesian probability at every decision node, and guaranteed termination.
+
+---
+
+## The Core Idea
+
+Every incident, failure, or decision has the same causal anatomy. The vocabulary changes — "bug" becomes "symptom", "treatment" becomes "resolution" — but the structure does not.
+
+The **5 Ws** establish what happened: Who, What, When, Where, Why (surface).
+The **5 Whys** trace the cause: iterative causal descent until root cause criteria are met.
+Together they constrain the investigation space and force evidence-based conclusions.
+
+What distinguishes HTSA from naive 5 Whys:
+- Probability at every node (Bayesian prior + posterior)
+- Branch structure (DAG, not linear chain)
+- Formal depth criteria (4 tests to declare root cause)
+- Evidence tiers (4 tiers with formal weights)
+- Pruning with recovery (branches are logged, not discarded)
+- Termination proof (Doob 1949, bounded by MAX_REOPEN=3, MAX_VERIFY=3)
+
+---
+
+## Layer 1: Situation Map — The 5 Ws
+
+**Purpose**: Establish the full picture before any hypothesis is formed.
+
+**Rule**: All five questions must be answered before Layer 2 begins. Anchoring bias fires the moment you form a hypothesis before completing the map.
+
+| W | What it captures |
+|---|---|
+| Who | Actor, subject, affected parties, detector, resolver, stakeholders |
+| What | The specific, measurable event — not a vague label |
+| When | Before (normal state), During (onset), After (current state) |
+| Where | Location, system scope, isolation (global vs. local) |
+| Why (surface) | The obvious first reason — explicitly marked as surface-level, not root cause |
+
+**Output**: A situation map with scope boundary, initial evidence, and the first set of priors.
+
+---
+
+## Layer 2: Causal Chain — The 5 Whys with Bayesian Updating
+
+**Purpose**: Traverse the causal graph from symptoms to root cause.
+
+### Search Strategy Selection
+
+| Strategy | When to use |
+|---|---|
+| Best-First | Default. Follow the highest-probability branch at each step. |
+| DFS | Time pressure. Go deep fast on a single branch. |
+| BFS | Cannot miss anything. Explore all branches level by level. |
+
+### Evidence Tiers
+
+| Tier | Type | Reliability |
+|---|---|---|
+| 1 | Physical / instrumental (logs, metrics, recordings, signed documents) | Highest |
+| 2 | Direct observation (witnessed firsthand, controlled surveys) | High |
+| 3 | Inferential (correlation, pattern matching, statistical analysis) | Medium |
+| 4 | Testimonial (interviews, self-reports, memory) | Lowest |
+
+### Bayesian Updating
+
+At each hypothesis node H given new evidence E:
+P(H|E) = P(E|H) × P(H) / P(E)
+
+Priors start from base rates where available. Updates compound across the branch. Branches with posterior below threshold are pruned.
+
+**Pruning thresholds**:
+- General: 5%
+- Safety-critical: ≤1%
+- Exploratory: 10%
+
+Pruned branches are logged with probability-at-time-of-pruning. When leading branches are disconfirmed, pruned branches are reconsidered with updated posteriors.
+
+### Depth Criteria (all four must pass to declare root cause)
+
+1. **Actionability** — Is there a concrete, implementable change that addresses this cause?
+2. **Counterfactual Clarity** — Can you state precisely how this cause produced the effect? Would the effect not have occurred without this cause?
+3. **System Boundary** — Is this cause inside the system's control? (Causes outside scope are Accept, not Fix.)
+4. **Diminishing Returns** — Would going one Why deeper change what action you'd take? If no, stop.
+
+### Node States
+
+- **Finding**: Supported by Tier 1 or Tier 2 evidence. Treated as fact.
+- **Hypothesis**: Supported by Tier 3 or Tier 4 evidence, or inferred. Requires verification.
+
+---
+
+## Layer 3: Resolution
+
+**Purpose**: Design and validate interventions for each confirmed root cause.
+
+### Resolution Types
+
+| Type | Meaning |
+|---|---|
+| Fix | Root cause permanently eliminated. The problem cannot recur via this path. |
+| Mitigate | Root cause remains; impact is reduced to acceptable level. |
+| Accept | Cause is outside system control. Risk acknowledged, documented, monitored. |
+
+### Counterfactual Test (required for every Fix or Mitigate)
+
+"If this change had existed before the incident, would the problem still have occurred?"
+- Yes → fixing a symptom, not the root cause. Dig deeper.
+- No → intervention is correctly targeted.
+
+### Priority Scoring
+
+Score each intervention: Impact × Recurrence × Actionability, each 1–5.
+Within 20% of each other: treat as equal priority, sequence by implementation cost.
+
+### Root Cause Interactions
+
+| Pattern | What it means | What to do |
+|---|---|---|
+| AND | Causes A and B together produce the effect | Fix both; fixing one alone is insufficient |
+| OR (overdetermination) | Either A or B alone produces the effect | Fix both; either could reproduce the problem alone |
+| Amplification | A makes B worse | Address A first to reduce severity during B remediation |
+| Conflict | Fixing A worsens B | Resolve the interaction explicitly before committing |
+
+---
+
+## Layer 4: Verification and Learning
+
+**Purpose**: Confirm the fix worked and propagate knowledge.
+
+### Verification Windows
+
+| Mode | Window |
+|---|---|
+| Event-driven | Wait for next trigger; confirm non-recurrence |
+| Time-driven | Wait one full cycle of the relevant process |
+| Continuous | Measure before/after over a defined interval |
+| No trigger | 2 weeks (technical) · 1 quarter (organizational) |
+
+### Closure Checklist
+
+```
+□ Did the problem recur?              → Yes: return to Layer 2
+□ Does monitoring confirm the fix?
+□ Does the outcome match the prediction?
+□ Have priors been updated for next investigation?
+□ Were there surprises? Document them.
+```
+
+---
+
+## The 10 Anti-Patterns
+
+### 1. Skipping the Map
+Jump to "why" without establishing "what". Results in two investigators pursuing different problems. Fix: complete all 5 Ws before the first Why.
+
+### 2. Single-Cause Trap
+Stop at the first satisfying root cause. The most obvious cause is rarely the only one. Fix: after Root Cause A, ask "does this explain 100% of the problem?"
+
+### 3. Stopping at a Person
+Name a person as root cause. People operate within systems. Fix: person named → ask Why once more. Root cause is almost always a missing guardrail or process.
+
+### 4. Circular Whys
+Why chain loops back to an earlier node. Fix: name it as a feedback loop. Apply break-point protocol: identify the full cycle, choose a break point explicitly.
+
+### 5. Evidence-Free Whys
+Every answer stated as fact but supported only by intuition. Fix: every Why must cite evidence with tier. No evidence = Hypothesis, not Finding.
+
+### 6. Groupthink Investigation
+Predetermined conclusion; investigation exists to confirm consensus. Fix: assign adversarial investigator whose explicit job is to pursue the unwanted hypothesis.
+
+### 7. Symptom Fix
+Resolution targets a visible symptom, not the root cause. Counterfactual test not applied or applied incorrectly. Fix: if the answer to the counterfactual is "yes, eventually" — go deeper.
+
+### 8. Premature Pruning
+Branch dismissed early; pruning not revisited when leading branches fail. Fix: log every pruned branch with probability and evidence. Recalculate posteriors when leaders are disconfirmed.
+
+### 9. Infinite Depth
+Why chain passes the point of action into organizational archaeology. Fix: apply Diminishing Returns test at every level. Root cause analysis ends at the point of action.
+
+### 10. Unfalsifiable Root Cause
+"Communication breakdown", "technical debt", "culture" — conditions, not causes. Cannot be counterfactually tested or fixed with a concrete action. Fix: push through the abstraction until you have a specific, testable, actionable mechanism.
+
+---
+
+## The 7 Cognitive Bias Defenses
+
+| Bias | Defense |
+|---|---|
+| Confirmation bias | Actively seek disconfirming evidence before concluding |
+| Availability heuristic | Set priors from base rates and data, not what comes to mind first |
+| Attribution bias | Person named? Ask Why once more |
+| Sunk cost | Follow the pruning threshold regardless of investigation time invested |
+| Groupthink | Assign adversarial role structurally |
+| Anchoring | No leading hypothesis before Layer 1 is complete |
+| Premature closure | All four depth criteria must pass |
+
+---
+
+## The 8 Mathematical Foundations
+
+### 1. Graph Theory
+The investigation state space S is a directed acyclic graph G = (V, E) where:
+- V = hypothesis nodes with probability labels
+- E = causal edges with conditional probability weights
+- Convergence: detected when all branches are either Resolved or Pruned
+
+### 2. Exponential Problem Space
+The hypothesis space H grows exponentially with depth d: |H| = O(b^d) where b = branching factor.
+Without pruning, exhaustive search is computationally intractable. Bayesian pruning reduces effective search space to polynomial in practice.
+
+### 3. Causal Inference
+Uses Pearl's do-calculus. Distinguishes observational P(Y|X) from interventional P(Y|do(X)).
+Root cause validation requires interventional evidence, not merely correlation.
+Counterfactual: "Would Y have occurred if X had not?" — formalizes the depth test.
+
+### 4. Information Theory
+Every *correct* Why answer W reduces conditional entropy: H(S|W) < H(S).
+Information gain per answer: IG(W) = H(S) - H(S|W).
+Best-First search prioritizes nodes maximizing expected information gain.
+
+### 5. Bayesian Reasoning
+Full update at every hypothesis node. Prior P(H) set from base rates.
+Evidence E updates posterior via Bayes' theorem. Pruning threshold applied to posterior.
+Algorithm is consistent: converges to true posterior as evidence accumulates (by Doob 1949).
+
+### 6. Search Algorithms
+Best-First: priority queue ordered by posterior probability. Explores highest-value branches first.
+DFS: LIFO stack. Low memory. Good for time-bounded single-path investigation.
+BFS: FIFO queue. Explores all branches at each depth level. Complete but memory-intensive.
+
+### 7. Cognitive Biases
+Seven cognitive hazards enumerated with formal detection conditions.
+Each bias has a structural mitigation (not a reminder): adversarial role assignment, evidence-tier requirement, depth test requirement. Mitigations are process constraints, not attitudes.
+
+### 8. Evidence Evaluation
+Four-tier hierarchy with formal weight assignments.
+Probability of Necessity (PN) and Probability of Sufficiency (PS) bounds constrain causal claims.
+Temporal firewall: evidence predating the incident may not support causal claims about the incident.
+
+---
+
+## The 7 Formal Proofs
+
+1. **Formal Definitions** — all primitive terms defined: Investigation, Node, Edge, Finding, Hypothesis, Depth Criteria, Resolution
+2. **Algorithm Correctness** — the HTSA algorithm terminates and produces a valid output for all finite inputs
+3. **Termination** — bounded by MAX_REOPEN=3 and MAX_VERIFY=3; proves no infinite loop is possible
+4. **Completeness** — if a root cause exists and is reachable, the algorithm will find it (under stated assumptions)
+5. **Optimality** — HTSA is greedy-optimal, not globally optimal; this qualifier is explicit and not a limitation but a design choice
+6. **Convergence** — via Doob's martingale theorem (1949), NOT Bernstein-von Mises; posteriors converge to true values as evidence accumulates
+7. **Information Gain** — every correct Why answer strictly reduces entropy; wrong answers are detected and reversed by the Bayesian update
+
+---
+
+## Use Cases and Domains
+
+### Engineering / SRE
+Production incidents, latency regressions, data pipeline failures, security breaches, deployment failures. Evidence: logs, metrics, traces, code diffs.
+
+### Medicine / Clinical
+Differential diagnosis, treatment failure analysis, adverse event investigation. Evidence: test results, imaging, patient history, clinical observations.
+
+### Business
+Sales cycle bottlenecks, customer churn, process failures, product launch failures. Evidence: analytics, interviews, financial data, A/B test results.
+
+### Legal
+Liability investigation, compliance failures, contract disputes. Evidence: documents, testimony, physical records, expert analysis.
+
+### Personal
+Burnout investigation, relationship failures, recurring mistakes, decision analysis. Evidence: journals, patterns, feedback from others.
+
+---
+
+## Cheat Sheet (one page)
+
+**Step 1 — Map the situation**: Answer Who, What, When, Where, Why (surface). All five. No exceptions.
+
+**Step 2 — Trace the cause**: Set priors. Pick search strategy. At each Why: state answer → cite evidence → mark Finding or Hypothesis → update probabilities → prune below threshold. Branch when reality branches. Stop when all four depth criteria pass.
+
+**Step 3 — Choose the fix**: For each root cause, decide Fix/Mitigate/Accept. Run counterfactual test. Score by Impact × Recurrence × Actionability. Handle interactions (AND/OR/Amplification/Conflict).
+
+**Step 4 — Verify it worked**: Set verification window. Check for recurrence. Update priors. Document surprises.
+
+**Rapid mode (under pressure)**: Same steps, one sentence each, DFS only, raise threshold to 20%, accept Tier 2-3 evidence temporarily, label fix as "rapid — verify later". Never skip Step 1 or the counterfactual test.
+
+---
+
+## Sitemap
+
+- Home: https://damionrashford.github.io/htsa/
+- Algorithm (4 layers): https://damionrashford.github.io/htsa/#/algorithm
+- Math (8 foundations): https://damionrashford.github.io/htsa/#/math
+- Engine (TypeScript implementation): https://damionrashford.github.io/htsa/#/engine
+- Docs landing: https://damionrashford.github.io/htsa/#/docs
+- Cheat Sheet: https://damionrashford.github.io/htsa/#/docs/guides--cheatsheet
+- Anti-Patterns: https://damionrashford.github.io/htsa/#/docs/guides--antipatterns
+- Examples index: https://damionrashford.github.io/htsa/#/docs/examples--00_index
+- GitHub: https://github.com/damionrashford/htsa

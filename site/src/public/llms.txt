@@ -1,56 +1,67 @@
 # HTSA — How to Solve Anything
 
-> A structured, probabilistic root cause analysis framework combining the 5 Ws and 5 Whys with Bayesian updating, causal DAG traversal, and LLM integration. Domain-agnostic. Fully formal. Provably convergent.
+> A structured investigation method for finding the root cause of any problem. Combines the 5 Ws and 5 Whys with Bayesian reasoning, causal graph traversal, and formal termination guarantees. Works for engineering incidents, medical diagnosis, business failures, legal investigations, and personal decisions.
 
 ## What HTSA Is
 
-HTSA (How to Solve Anything) is an open investigation framework for finding root causes of any problem — software incidents, business failures, scientific hypotheses, personal decisions. It is not a mental model checklist; it is a formal algorithm with eight mathematical foundations and seven formal proofs.
+HTSA (How to Solve Anything) is an open investigation framework — not a checklist or mental model, but a formal algorithm with eight mathematical foundations and seven formal proofs.
 
-Key differentiators:
-- Probabilistic reasoning: every hypothesis node carries a prior and updates via Bayes' rule as evidence arrives
-- Causal DAG traversal: problems are represented as directed acyclic graphs; the algorithm searches along causal edges, not symptom lists
-- Provably terminates: MAX_REOPEN=3 and MAX_VERIFY=3 bounds prevent infinite loops; convergence proved via Doob's martingale theorem (1949)
-- Greedy-optimal, not globally optimal — this qualifier is explicit and formalized
-- Four evidence tiers: Tier 1 (physical/instrumental) through Tier 4 (testimonial) with formal weight assignments
-- Pruning thresholds: 5% general, ≤1% safety-critical, 10% exploratory
+Key properties:
+- **Probabilistic**: every hypothesis node carries a Bayesian prior, updated as evidence arrives
+- **Causal**: problems are represented as directed acyclic graphs (DAGs); traversal follows causal edges, not symptom lists
+- **Formally terminates**: MAX_REOPEN=3 and MAX_VERIFY=3 bounds; convergence proved via Doob's martingale theorem (1949)
+- **Greedy-optimal, not globally optimal** — this qualifier is explicit and formalized in proof 05
+- **Four evidence tiers**: Tier 1 (physical/instrumental) → Tier 4 (testimonial), with formal weight assignments
+- **Pruning thresholds**: 5% general · ≤1% safety-critical · 10% exploratory
 
-## The Four Layers
+## The Four Layers (the algorithm)
 
-1. **Situation Map** — 5 Ws decomposition, scope boundary, evidence collection, initial probability assignment
-2. **Causal Chain** — DAG traversal, 5 Whys with Bayesian updating at each node, branch pruning
-3. **Resolution** — intervention design, counterfactual validation, multi-cause interaction handling
-4. **Verification & Learning** — outcome tracking, posterior update, knowledge capture
+**Layer 1 — Situation Map**: Answer all 5 Ws before forming any hypothesis. Who was involved? What specifically happened? When did it start? Where in the system or world? What is the surface-level reason? Anchoring bias fires if you skip this.
 
-## Python Engine
+**Layer 2 — Causal Chain**: Assign priors. Choose search strategy: Best-First (default), DFS (time pressure), or BFS (can't miss anything). At each Why: state answer → cite evidence with tier → mark Finding or Hypothesis → Bayesian update → prune below threshold. A root cause must pass all four depth criteria: Actionable, Counterfactual, In-scope, Diminishing Returns.
 
-The `htsa_engine` Python package (Python 3.11+, zero dependencies) implements the full algorithm:
+**Layer 3 — Resolution**: For each root cause: Fix (eliminate), Mitigate (reduce impact), or Accept (acknowledge risk). Counterfactual test required: "If this change had existed, would the problem still have occurred?" Priority scored as Impact × Recurrence × Actionability.
 
-- `Investigation` class: main orchestrator
-- `LLMAdvisor`: fills judgment slots via any OpenAI-compatible provider (OpenAI, Anthropic, local Ollama)
-- Supports `to_dict()` / `from_dict()` for JSON round-tripping
-- Exports Markdown in FRAMEWORK.md template format
-
-Install: `pip install htsa-engine` (coming soon) or clone and `pip install -e engine/`
+**Layer 4 — Verification & Learning**: Set verification window. Monitor for recurrence. Update priors. Document surprises.
 
 ## Mathematical Foundations
 
-1. Graph Theory — DAG representation of causal structures
-2. Exponential Space — why naive exhaustive search fails and why pruning is necessary
+1. Graph Theory — DAG representation of causal structures; convergence detection
+2. Exponential Problem Space — why exhaustive search fails and pruning is necessary
 3. Causal Inference — do-calculus, interventional vs. observational data, counterfactual tests
-4. Information Theory — every *correct* Why answer reduces entropy; guides search priority
-5. Bayesian Reasoning — prior → likelihood → posterior updating at each hypothesis node
-6. Search Algorithms — informed search over hypothesis space, heuristic priority queue
-7. Cognitive Biases — confirmation bias, anchoring, availability heuristic — enumerated and mitigated
-8. Evidence Evaluation — four-tier hierarchy, PNS (Probability of Necessity and Sufficiency)
+4. Information Theory — every *correct* Why answer reduces entropy; H(S|W) < H(S) for all valid W
+5. Bayesian Reasoning — P(H|E) = P(E|H)P(H)/P(E); prior → posterior at each hypothesis node
+6. Search Algorithms — Best-First, DFS, BFS over hypothesis space; heuristic priority queue
+7. Cognitive Biases — confirmation, anchoring, availability, attribution, sunk cost, groupthink, premature closure — all enumerated with structural mitigations
+8. Evidence Evaluation — four-tier hierarchy; Probability of Necessity and Sufficiency (PNS) bounds
 
-## Use Cases
+## Common Anti-Patterns
 
-- SRE incident postmortems
-- Engineering root cause analysis
-- Business failure analysis
-- Scientific hypothesis testing
-- Personal decision frameworks
-- Academic philosophy of causation
+1. Skipping the Map — investigating a vague impression instead of a defined problem
+2. Single-Cause Trap — stopping at the first satisfying answer
+3. Stopping at a Person — attribution bias as a root cause
+4. Circular Whys — tracing a feedback loop instead of a causal path
+5. Evidence-Free Whys — confirmation bias disguised as analysis
+6. Groupthink Investigation — predetermined conclusion
+7. Symptom Fix — failed counterfactual test
+8. Premature Pruning — non-recoverable branch elimination
+9. Infinite Depth — passing the point of action
+10. Unfalsifiable Root Cause — label instead of mechanism
+
+## Who Uses HTSA
+
+- SREs and engineers doing incident postmortems
+- Managers and team leads investigating process failures
+- Analysts tracing business bottlenecks
+- Clinicians structuring differential diagnosis
+- Lawyers building fact timelines
+- Anyone with a problem they can't solve by intuition alone
+
+## TypeScript Implementation
+
+The `packages/core` TypeScript package implements the full algorithm. Zero external dependencies.
+
+Key modules: `investigation.ts` (orchestrator), `graph.ts` (DAG), `probability.ts` (Bayesian updates), `bias.ts` (cognitive hazard detection), `evidence.ts` (tier classification), `resolution.ts` (fix/mitigate/accept).
 
 ## Repository
 
@@ -59,6 +70,19 @@ https://github.com/damionrashford/htsa
 ## Primary URL
 
 https://damionrashford.github.io/htsa/
+
+## Key Pages
+
+- Framework: https://damionrashford.github.io/htsa/#/algorithm
+- The Math: https://damionrashford.github.io/htsa/#/math
+- Engine / Implementation: https://damionrashford.github.io/htsa/#/engine
+- Docs / Guides: https://damionrashford.github.io/htsa/#/docs
+- Cheat Sheet: https://damionrashford.github.io/htsa/#/docs/guides--cheatsheet
+- Examples: https://damionrashford.github.io/htsa/#/docs/examples--00_index
+
+## Full Content
+
+https://damionrashford.github.io/htsa/llms-full.txt
 
 ## License
 
